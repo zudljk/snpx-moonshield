@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { crewPortraitPath, entrySlug } from "../utils/format";
+
+interface Props {
+  member: CollectionEntry<"crew">;
+}
+
+const { member } = Astro.props;
+const initials = member.data.name
+  .split(" ")
+  .map((part) => part[0])
+  .join("")
+  .slice(0, 2);
+const portraitSrc = crewPortraitPath(member.data.name);
+---
+
+<article class="panel card crew-card">
+  <div class="portrait-frame portrait-square">
+    <img
+      src={portraitSrc}
+      alt={`Portrait of ${member.data.name}`}
+      loading="lazy"
+      onerror="this.style.display='none'"
+    />
+    <span class="portrait-fallback">{initials}</span>
+  </div>
+  <div class="card-header">
+    <div>
+      <h3>{member.data.name}</h3>
+      <p class="meta-line">{member.data.role}</p>
+    </div>
+  </div>
+  <p>{member.data.summary}</p>
+  <p class="card-note">{member.data.origin}</p>
+  <a class="card-link" href={`/crew/${entrySlug(member.id)}`}>View profile</a>
+</article>

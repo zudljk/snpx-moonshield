@@ -1,0 +1,54 @@
+---
+import StatusBadge from "./StatusBadge.astro";
+import { departureTone, formatUtcDate } from "../utils/format";
+import type { DepartureData } from "../types";
+
+interface Props {
+  departure: DepartureData;
+  featured?: boolean;
+}
+
+const { departure, featured = false } = Astro.props;
+---
+
+<article
+  class:list={["panel", "card", "departure-card", featured && "featured-card"]}
+>
+  <div class="card-header">
+    <div>
+      <h3>{departure.title}</h3>
+      <p class="meta-line">
+        <a
+          href={`https://www.edsm.net/en/system/id/${departure.originSystemId}/name/${departure.originSystem}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {departure.originSystem}
+        </a>
+        to
+        <a
+          href={`https://www.edsm.net/en/system/id/${departure.destinationSystemId}/name/${departure.destinationSystem}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {departure.destinationSystem}
+        </a>
+      </p>
+    </div>
+    <StatusBadge
+      label={departure.status}
+      tone={departureTone(departure.status)}
+    />
+  </div>
+  <dl class="detail-grid">
+    <div>
+      <dt>Departure</dt>
+      <dd>{formatUtcDate(departure.departureTime)}</dd>
+    </div>
+    <div>
+      <dt>Boarding deadline</dt>
+      <dd>{formatUtcDate(departure.boardingDeadline)}</dd>
+    </div>
+  </dl>
+  <p>{departure.notes}</p>
+</article>

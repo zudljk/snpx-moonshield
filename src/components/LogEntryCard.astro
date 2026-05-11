@@ -1,0 +1,22 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { entrySlug, formatUtcDate } from "../utils/format";
+
+interface Props {
+  entry: CollectionEntry<"log">;
+}
+
+const { entry } = Astro.props;
+---
+
+<article class="panel card">
+  <div class="card-header">
+    <h3>{entry.data.title}</h3>
+    <p class="meta-line">{formatUtcDate(entry.data.pubDate)}</p>
+  </div>
+  <p>{entry.data.summary}</p>
+  <div class="tag-row">
+    {entry.data.tags.map((tag) => <span class="tag-chip">{tag}</span>)}
+  </div>
+  <a class="card-link" href={`/log/${entrySlug(entry.id)}`}>Open entry</a>
+</article>

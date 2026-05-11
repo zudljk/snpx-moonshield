@@ -1,0 +1,35 @@
+---
+import { getCollection } from "astro:content";
+import AnnouncementCard from "../../components/AnnouncementCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const announcements = (await getCollection("announcements")).sort(
+  (left, right) => right.data.pubDate.getTime() - left.data.pubDate.getTime(),
+);
+---
+
+<BaseLayout
+  title="Announcements | [SNPX] Moonshield"
+  description="Current operational notices and public advisories."
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">Public noticeboard</p>
+        <h1>Announcements</h1>
+        <p class="section-intro">
+          Operational messages, market notices and deck advisories issued by the
+          carrier command staff.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        {
+          announcements.map((announcement) => (
+            <AnnouncementCard announcement={announcement} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

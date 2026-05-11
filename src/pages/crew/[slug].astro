@@ -1,0 +1,67 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { crewProfileImagePath, entrySlug } from "../../utils/format";
+
+export async function getStaticPaths() {
+  const crew = await getCollection("crew");
+
+  return crew.map((member) => ({
+    params: { slug: entrySlug(member.id) },
+    props: { member },
+  }));
+}
+
+const { member } = Astro.props;
+const { Content } = await render(member);
+const profileImageSrc = crewProfileImagePath(member.data.name);
+---
+
+<BaseLayout
+  title={`${member.data.name} | Crew | [SNPX] Moonshield`}
+  description={member.data.summary}
+>
+  <section class="section">
+    <div class="container crew-profile-layout">
+      <a class="back-link" href="/crew">Back to crew</a>
+
+      <div class="crew-profile-header">
+        <div class="panel crew-profile-copy">
+          <p class="eyebrow">{member.data.role}</p>
+          <h1>{member.data.name}</h1>
+          <p class="section-intro">{member.data.summary}</p>
+
+          <dl class="crew-facts">
+            <div>
+              <dt>Origin</dt>
+              <dd>{member.data.origin}</dd>
+            </div>
+            <div>
+              <dt>Assignment</dt>
+              <dd>[SNPX] Moonshield</dd>
+            </div>
+            <div>
+              <dt>Archive use</dt>
+              <dd>Public personnel briefings and passenger reference</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="panel crew-media-panel">
+          <div class="portrait-frame portrait-wide">
+            <img
+              src={profileImageSrc}
+              alt={`${member.data.name} aboard [SNPX] Moonshield`}
+              onerror="this.style.display='none'"
+            />
+          </div>
+        </div>
+      </div>
+
+      <article class="content-panel crew-biography">
+        <h2>Biography</h2>
+        <Content />
+      </article>
+    </div>
+  </section>
+</BaseLayout>

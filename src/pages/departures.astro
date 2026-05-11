@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DepartureCard from "../components/DepartureCard.astro";
+import departures from "../data/departures.json";
+import { getNextDeparture } from "../utils/format";
+import type { DepartureData } from "../types";
+
+const departuresData = (departures as DepartureData[]).sort(
+  (left, right) =>
+    new Date(left.departureTime).getTime() -
+    new Date(right.departureTime).getTime(),
+);
+
+const nextDeparture = getNextDeparture(departuresData);
+---
+
+<BaseLayout
+  title="Departures | [SNPX] Moonshield"
+  description="Planned carrier jump schedule and boarding windows."
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">Jump control</p>
+        <h1>Departures</h1>
+        <p class="section-intro">
+          Planned jumps, boarding deadlines and current deck status for outbound
+          carrier movement.
+        </p>
+      </div>
+
+      {
+        nextDeparture && (
+          <div class="section-block">
+            <h2>Next active departure</h2>
+            <DepartureCard departure={nextDeparture} featured={true} />
+          </div>
+        )
+      }
+
+      <div class="card-grid">
+        {
+          departuresData.map((departure) => (
+            <DepartureCard departure={departure} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

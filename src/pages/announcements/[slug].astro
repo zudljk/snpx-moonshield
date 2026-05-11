@@ -1,0 +1,45 @@
+---
+import { getCollection, render } from "astro:content";
+import ContentLayout from "../../layouts/ContentLayout.astro";
+import StatusBadge from "../../components/StatusBadge.astro";
+import {
+  entrySlug,
+  formatUtcDate,
+  isExpired,
+  priorityTone
+} from "../../utils/format";
+
+export async function getStaticPaths() {
+  const announcements = await getCollection("announcements");
+
+  return announcements.map((announcement) => ({
+    params: { slug: entrySlug(announcement.id) },
+    props: { announcement }
+  }));
+}
+
+const { announcement } = Astro.props;
+const { Content } = await render(announcement);
+const expired = isExpired(announcement.data.expires);
+---
+
+<ContentLayout
+  title={announcement.data.title}
+  description={announcement.data.summary}
+  eyebrow="Announcements"
+  summary={announcement.data.summary}
+  meta={`Posted ${formatUtcDate(announcement.data.pubDate)} · Expires ${formatUtcDate(
+    announcement.data.expires
+  )}`}
+  backHref="/announcements"
+  backLabel="Back to announcements"
+>
+  <div class="card-badges">
+    <StatusBadge
+      label={announcement.data.priority}
+      tone={priorityTone(announcement.data.priority)}
+    />
+    {expired && <StatusBadge label="expired" tone="muted" />}
+  </div>
+  <Content />
+</ContentLayout>

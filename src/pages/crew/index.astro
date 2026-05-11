@@ -1,0 +1,31 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CrewCard from "../../components/CrewCard.astro";
+
+const crew = (await getCollection("crew")).sort(
+  (left, right) => left.data.order - right.data.order,
+);
+---
+
+<BaseLayout
+  title="Crew | [SNPX] Moonshield"
+  description="Officer roster and senior deck crew."
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">Command roster</p>
+        <h1>Crew manifest</h1>
+        <p class="section-intro">
+          Senior officers and key specialists currently assigned to carrier
+          duty.
+        </p>
+      </div>
+
+      <div class="card-grid card-grid-crew">
+        {crew.map((member) => <CrewCard member={member} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,49 @@
+---
+import carrierData from "../data/carrier.json";
+
+const pathname = Astro.url.pathname;
+
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/services", label: "Services" },
+  { href: "/crew", label: "Crew" },
+  { href: "/departures", label: "Departures" },
+  { href: "/log", label: "Captain's Log" },
+  { href: "/announcements", label: "Announcements" },
+  { href: "/about", label: "About" },
+];
+
+const isActive = (href: string) =>
+  href === "/" ? pathname === href : pathname.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark">{carrierData.callsign}</span>
+      <span>
+        <strong>{carrierData.name}</strong>
+        <small>Carrier Information Portal</small>
+      </span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <ul class="nav-list">
+        {
+          links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class:list={{
+                  "nav-link": true,
+                  active: isActive(link.href),
+                }}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>

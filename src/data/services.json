@@ -1,0 +1,55 @@
+[
+  {
+    "name": "Refuel",
+    "status": "online",
+    "summary": "Rapid fuel transfer for ships returning from patrol, trade or survey operations."
+  },
+  {
+    "name": "Repair",
+    "status": "online",
+    "summary": "Hull patching, structural reinforcement and emergency restoration for worn vessels."
+  },
+  {
+    "name": "Rearm",
+    "status": "online",
+    "summary": "Standard ammunition replenishment and ordnance handling under deck supervision."
+  },
+  {
+    "name": "Shipyard",
+    "status": "limited",
+    "summary": "Limited storage slots available while outbound expedition craft remain in berth.",
+    "note": "Reserve requests are prioritized for long-range support pilots."
+  },
+  {
+    "name": "Outfitting",
+    "status": "online",
+    "summary": "A curated stock of exploration, logistics and survival modules."
+  },
+  {
+    "name": "Universal Cartographics",
+    "status": "online",
+    "summary": "Survey data accepted daily with expedited review for deep-space teams."
+  },
+  {
+    "name": "Vista Genomics",
+    "status": "online",
+    "summary": "Exobiology sample intake and secure transfer to certified analysis channels."
+  },
+  {
+    "name": "Redemption Office",
+    "status": "limited",
+    "summary": "Claims are processed in rotating windows while legal ledgers are synchronized.",
+    "note": "Expect modest delays during carrier jump cycles."
+  },
+  {
+    "name": "Bartender",
+    "status": "online",
+    "summary": "Social deck open with trade gossip, mission chatter and a strong synth-coffee menu."
+  },
+  {
+    "name": "Secure Warehouse",
+    "status": "offline",
+    "summary": "Protected cargo lockers and bonded storage for approved commercial contracts.",
+    "note": "Storage control is temporarily sealed for inventory reconciliation."
+  }
+]

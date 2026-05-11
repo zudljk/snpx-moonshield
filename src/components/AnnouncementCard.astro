@@ -1,0 +1,38 @@
+---
+import type { CollectionEntry } from "astro:content";
+import StatusBadge from "./StatusBadge.astro";
+import {
+  entrySlug,
+  formatUtcDate,
+  isExpired,
+  priorityTone
+} from "../utils/format";
+
+interface Props {
+  announcement: CollectionEntry<"announcements">;
+}
+
+const { announcement } = Astro.props;
+const expired = isExpired(announcement.data.expires);
+---
+
+<article class="panel card">
+  <div class="card-header">
+    <h3>{announcement.data.title}</h3>
+    <div class="card-badges">
+      <StatusBadge
+        label={announcement.data.priority}
+        tone={priorityTone(announcement.data.priority)}
+      />
+      {expired && <StatusBadge label="expired" tone="muted" />}
+    </div>
+  </div>
+  <p>{announcement.data.summary}</p>
+  <p class="card-note">
+    Posted {formatUtcDate(announcement.data.pubDate)} · Expires{" "}
+    {formatUtcDate(announcement.data.expires)}
+  </p>
+  <a class="card-link" href={`/announcements/${entrySlug(announcement.id)}`}>
+    Read notice
+  </a>
+</article>

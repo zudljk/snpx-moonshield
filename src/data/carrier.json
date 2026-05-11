@@ -1,0 +1,15 @@
+{
+  "name": "[SNPX] Moonshield",
+  "callsign": "HHY-NTG",
+  "carrierId": "HHY-NTG",
+  "currentSystem": "Dryooe Flyou WB-T b47-10",
+  "status": "Refueling",
+  "role": [
+    "Exploration Support",
+    "Long-range Transport",
+    "Independent Trade Operations"
+  ],
+  "welcomeMessage": "Stellanebula Project welcomes all licensed pilots, expedition crews and independent traders aboard [SNPX] Moonshield. Respect the hangar deck, honor the queue and keep your manifests current.",
+  "shortGreeting": "Welcome to fleet carrier [SNPX] Moonshield. A Stellanebula Project carrier. We are here to support your exploration, trade and transport needs across the galaxy.",
+  "locationNote": "Holding position in orbit around Dryooe Flyou WB-T b47-10."
+}

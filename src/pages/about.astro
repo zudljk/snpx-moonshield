@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import carrier from "../data/carrier.json";
+import type { CarrierData } from "../types";
+
+const carrierData = carrier as CarrierData;
+---
+
+<BaseLayout
+  title={`About | ${carrierData.name}`}
+  description={carrierData.shortGreeting}
+>
+  <section class="section">
+    <div class="container prose-grid">
+      <div class="section-heading">
+        <p class="eyebrow">About the carrier</p>
+        <h1>{carrierData.name}</h1>
+        <p class="section-intro">
+          {carrierData.name} operates as a support platform for long-range travel,
+          survey logistics and disciplined trade runs. The carrier is affiliated with
+          the <a
+            class="card-link"
+            href="https://www.stellanebula.de/"
+            target="_blank"
+            rel="noopener noreferrer">Stellanebula Project</a
+          >, a coalition of independent pilots and
+        </p>
+      </div>
+
+      <div class="content-panel">
+        <h2>Purpose</h2>
+        <p>
+          The carrier maintains a stable port for commanders moving between the
+          Bubble, frontier staging routes and remote survey corridors. Priority
+          is given to crews requiring fuel, repair support, cartographic
+          turnover and reliable jump scheduling.
+        </p>
+
+        <h2>Passenger conduct</h2>
+        <p>
+          Keep to assigned berths, comply with docking signals, declare
+          hazardous cargo and do not interfere with deck crews during jump
+          preparation. The carrier welcomes independent pilots, but not
+          disorderly ones.
+        </p>
+
+        <h2>Contact and comms</h2>
+        <p>
+          Public notices are posted through the announcement board. Docking and
+          manifest disputes should be routed to Quartermaster Control.
+          Operational inquiries for expedition planning are relayed through
+          Flight Operations.
+        </p>
+
+        <h2>Disclaimer</h2>
+        <p>
+          This is a fan-made website inspired by Elite: Dangerous. It is not an
+          official Frontier Developments property and uses no official logos or
+          protected art assets.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

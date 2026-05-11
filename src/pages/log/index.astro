@@ -1,0 +1,31 @@
+---
+import { getCollection } from "astro:content";
+import LogEntryCard from "../../components/LogEntryCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const entries = (await getCollection("log")).sort(
+  (left, right) => right.data.pubDate.getTime() - left.data.pubDate.getTime(),
+);
+---
+
+<BaseLayout
+  title="Captain's Log | [SNPX] Moonshield"
+  description="Archived command log entries from the carrier."
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">Command archive</p>
+        <h1>Captain's log</h1>
+        <p class="section-intro">
+          Recorded field notes covering jumps, trade runs and notable
+          encounters.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        {entries.map((entry) => <LogEntryCard entry={entry} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

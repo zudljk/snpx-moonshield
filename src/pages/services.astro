@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ServiceCard from "../components/ServiceCard.astro";
+import services from "../data/services.json";
+import type { ServiceData } from "../types";
+
+const servicesData = services as ServiceData[];
+---
+
+<BaseLayout
+  title="Services | [SNPX] Moonshield"
+  description="Operational services aboard the carrier."
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <p class="eyebrow">Deck operations</p>
+        <h1>Carrier services</h1>
+        <p class="section-intro">
+          Support facilities available to visiting pilots, expedition teams and
+          contracted trade crews.
+        </p>
+      </div>
+
+      <div class="card-grid card-grid-services">
+        {servicesData.map((service) => <ServiceCard service={service} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

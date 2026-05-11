@@ -1,0 +1,10 @@
+---
+interface Props {
+  label: string;
+  tone?: "online" | "warning" | "offline" | "info" | "critical" | "muted";
+}
+
+const { label, tone = "info" } = Astro.props;
+---
+
+<span class:list={["status-badge", `status-${tone}`]}>{label}</span>

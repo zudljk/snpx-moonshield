@@ -1,0 +1,130 @@
+---
+import { getCollection } from "astro:content";
+import AnnouncementCard from "../components/AnnouncementCard.astro";
+import DepartureCard from "../components/DepartureCard.astro";
+import LogEntryCard from "../components/LogEntryCard.astro";
+import ServiceCard from "../components/ServiceCard.astro";
+import StatusBadge from "../components/StatusBadge.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import carrier from "../data/carrier.json";
+import departures from "../data/departures.json";
+import services from "../data/services.json";
+import { getNextDeparture } from "../utils/format";
+import type { CarrierData, DepartureData, ServiceData } from "../types";
+
+const carrierData = carrier as CarrierData;
+const servicesData = services as ServiceData[];
+const departuresData = departures as DepartureData[];
+
+const latestAnnouncements = (await getCollection("announcements"))
+  .sort((left, right) => right.data.pubDate.getTime() - left.data.pubDate.getTime())
+  .slice(0, 3);
+
+const latestLogEntries = (await getCollection("log"))
+  .sort((left, right) => right.data.pubDate.getTime() - left.data.pubDate.getTime())
+  .slice(0, 3);
+
+const nextDeparture = getNextDeparture(departuresData);
+const featuredServices = servicesData.slice(0, 6);
+---
+
+<BaseLayout
+  title={`${carrierData.name} | Carrier Portal`}
+  description={carrierData.shortGreeting}
+>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Fleet Carrier Public Relay</p>
+        <h1>{carrierData.name}</h1>
+        <p class="section-intro">{carrierData.shortGreeting}</p>
+        <p>{carrierData.welcomeMessage}</p>
+        <div class="tag-row">
+          {carrierData.role.map((role) => <span class="tag-chip">{role}</span>)}
+        </div>
+      </div>
+
+      <aside class="panel hero-panel">
+        <div class="panel-heading">
+          <h2>Current status</h2>
+          <StatusBadge label={carrierData.status} tone="online" />
+        </div>
+        <dl class="stat-grid">
+          <div>
+            <dt>Callsign</dt>
+            <dd>{carrierData.callsign}</dd>
+          </div>
+          <div>
+            <dt>Carrier ID</dt>
+            <dd>{carrierData.carrierId}</dd>
+          </div>
+          <div>
+            <dt>System</dt>
+            <dd>{carrierData.currentSystem}</dd>
+          </div>
+          <div>
+            <dt>Position</dt>
+            <dd>{carrierData.locationNote}</dd>
+          </div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid-2">
+        <div class="section-block">
+          <div class="section-heading">
+            <p class="eyebrow">Next departure</p>
+            <h2>Boarding advisory</h2>
+          </div>
+          {nextDeparture ? (
+            <DepartureCard departure={nextDeparture} featured={true} />
+          ) : (
+            <div class="panel">
+              <p>No active jump orders are posted at this time.</p>
+            </div>
+          )}
+        </div>
+
+        <div class="section-block">
+          <div class="section-heading">
+            <p class="eyebrow">Deck services</p>
+            <h2>Operational overview</h2>
+          </div>
+          <div class="card-grid compact-grid">
+            {featuredServices.map((service) => <ServiceCard service={service} />)}
+          </div>
+          <a class="section-link" href="/services">View all services</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container grid grid-2">
+      <div class="section-block">
+        <div class="section-heading">
+          <p class="eyebrow">Station traffic</p>
+          <h2>Latest announcements</h2>
+        </div>
+        <div class="card-grid">
+          {latestAnnouncements.map((announcement) => (
+            <AnnouncementCard announcement={announcement} />
+          ))}
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-heading">
+          <p class="eyebrow">Command archive</p>
+          <h2>Recent captain's log</h2>
+        </div>
+        <div class="card-grid">
+          {latestLogEntries.map((entry) => <LogEntryCard entry={entry} />)}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
