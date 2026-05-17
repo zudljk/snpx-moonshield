@@ -19,7 +19,7 @@ const { departure, featured = false } = Astro.props;
       <h3>{departure.title}</h3>
       <p class="meta-line">
         <a
-          href={`https://www.edsm.net/en/system/id/${departure.originSystemId}/name/${departure.originSystem}`}
+          href={`https://inara.cz/elite/starsystem/${departure.originSystemId}/`}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -27,7 +27,7 @@ const { departure, featured = false } = Astro.props;
         </a>
         to
         <a
-          href={`https://www.edsm.net/en/system/id/${departure.destinationSystemId}/name/${departure.destinationSystem}`}
+          href={`https://inara.cz/elite/starsystem/${departure.destinationSystemId}/`}
           target="_blank"
           rel="noopener noreferrer"
         >

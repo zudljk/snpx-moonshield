@@ -30,6 +30,28 @@ npm run preview
 - Service availability lives in `src/data/services.json`.
 - Planned jumps and boarding windows live in `src/data/departures.json`.
 
+## Jump control CLI
+
+The repository includes a small operational CLI for keeping carrier movement data current.
+
+```bash
+# Refresh carrier.json from the configured Inara station page.
+# If omitted, locationNote becomes "Holding position at <currentSystem>."
+# If omitted, status keeps its current value.
+npm run carrier -- sync-position \
+  --status "Refueling" \
+  --location-note "Holding position in orbit around Colonia."
+
+# Add the next departure and mark the previous active one as completed.
+npm run carrier -- schedule-jump \
+  --title "Return to HIP 117029" \
+  --destination "Colonia" \
+  --departure "3312-04-26T09:00:00Z" \
+  --notes "Please ensure your ship is ready for departure."
+```
+
+Use `--dry-run` with either command to preview the change without writing files.
+
 ## Notes
 
 - The site is fully static and uses no backend, database, authentication or external APIs.

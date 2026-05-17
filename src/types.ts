@@ -2,7 +2,10 @@ export interface CarrierData {
   name: string;
   callsign: string;
   carrierId: string;
+  stationId: number;
   currentSystem: string;
+  currentSystemId: number;
+  lastPositionSyncAt?: string;
   status: string;
   role: string[];
   welcomeMessage: string;
