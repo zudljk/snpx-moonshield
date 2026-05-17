@@ -5,3 +5,4 @@ HighResScreenShot_2026-04-25_18-59-33/*
 .DS_Store
 *.zip
 unused_img
+.env

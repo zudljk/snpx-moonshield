@@ -10,6 +10,7 @@
     "carrier": "node scripts/moonshield.mjs"
   },
   "dependencies": {
+    "@openai/codex": "^0.130.0",
     "astro": "latest",
     "typescript": "^5.9.3"
   }

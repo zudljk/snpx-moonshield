@@ -51,6 +51,12 @@ npm run carrier -- schedule-jump \
 
 # Stage carrier/departure data, commit it and push it.
 npm run carrier -- commit
+
+# Generate a new captain's log entry through the Codex CLI.
+# If omitted, --date defaults to today's real date shifted +1288 years.
+# If omitted, --title is inferred from the topic.
+npm run carrier -- generate-log \
+  --topic "Arriving at HIP 117029 and preparing to support Stella Nebula Project"
 ```
 
 Use `--dry-run` with any command to preview the change without writing files or running Git.

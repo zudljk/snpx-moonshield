@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, readdir, writeFile, mkdtemp, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
+import { tmpdir } from "node:os";
 import path from "node:path";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const carrierPath = path.join(projectRoot, "src/data/carrier.json");
 const departuresPath = path.join(projectRoot, "src/data/departures.json");
+const logDir = path.join(projectRoot, "src/content/log");
 const activeStatuses = new Set(["scheduled", "boarding", "delayed"]);
 
 main().catch((error) => {
@@ -36,6 +38,11 @@ async function main() {
 
   if (command === "commit") {
     await commitStatusUpdate(args);
+    return;
+  }
+
+  if (command === "generate-log") {
+    await generateLogEntry(args);
     return;
   }
 
@@ -126,7 +133,7 @@ async function scheduleJump(args) {
 async function commitStatusUpdate(args) {
   const message = `Carrier status update ${formatLocalMinute(new Date())}`;
   const commands = [
-    ["add", "src/data/carrier.json", "src/data/departures.json"],
+    ["add", "src/data/carrier.json", "src/data/departures.json", "src/content/log/*.md"],
     ["commit", "-m", message],
     ["push"],
   ];
@@ -140,6 +147,45 @@ async function commitStatusUpdate(args) {
   for (const command of commands) {
     await runGit(command);
   }
+}
+
+async function generateLogEntry(args) {
+  const topic = requireString(args.topic, "--topic");
+  const gameDate = typeof args.date === "string" ? normaliseGameDate(args.date) : currentGameDate();
+  const requestedTitle = typeof args.title === "string" ? args.title : null;
+  const existingLogs = await readRecentLogs(4);
+  const generated = await requestGeneratedLog({
+    topic,
+    gameDate,
+    requestedTitle,
+    existingLogs,
+  });
+
+  const title = requestedTitle ?? requireString(generated.title, "generated title");
+  const summary = requireString(generated.summary, "generated summary");
+  const body = requireString(generated.body, "generated body");
+  const tags = Array.isArray(generated.tags)
+    ? generated.tags.filter((tag) => typeof tag === "string" && tag.length > 0)
+    : [];
+  const slug = `${gameDate}-${titleToSlug(title)}`;
+  const filePath = path.join(logDir, `${slug}.md`);
+  const markdown = renderLogMarkdown({
+    title,
+    gameDate,
+    summary,
+    tags,
+    body,
+  });
+
+  if (args["dry-run"]) {
+    console.log(`Would write src/content/log/${slug}.md`);
+    console.log("");
+    console.log(markdown);
+    return;
+  }
+
+  await writeFile(filePath, markdown);
+  console.log(`Created src/content/log/${slug}.md`);
 }
 
 function extractStationSystem(html) {
@@ -211,6 +257,85 @@ async function fetchHtml(url) {
   return response.text();
 }
 
+async function requestGeneratedLog({ topic, gameDate, requestedTitle, existingLogs }) {
+  const tempDir = await mkdtemp(path.join(tmpdir(), "moonshield-log-"));
+  const schemaPath = path.join(tempDir, "schema.json");
+  const outputPath = path.join(tempDir, "response.json");
+
+  try {
+    await writeFile(schemaPath, JSON.stringify(logOutputSchema, null, 2));
+    await runCodexExec({
+      prompt: buildLogPrompt({ topic, gameDate, requestedTitle, existingLogs }),
+      schemaPath,
+      outputPath,
+    });
+    return JSON.parse(await readFile(outputPath, "utf8"));
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+}
+
+function buildLogPrompt({ topic, gameDate, requestedTitle, existingLogs }) {
+  return `You write captain's log entries for the fleet carrier [SNPX] Moonshield in a restrained, literary command-log voice.
+
+Create one new entry for in-game date ${gameDate}.
+Topic: ${topic}
+${requestedTitle ? `Use this exact title: ${requestedTitle}` : "Infer a concise title from the topic."}
+
+Return JSON only with this shape:
+{
+  "title": "string",
+  "summary": "single sentence",
+  "tags": ["lowercase-tag"],
+  "body": "three short Markdown paragraphs"
+}
+
+Style references:
+${existingLogs.join("\n\n---\n\n")}
+
+Constraints:
+- Keep the prose in-universe.
+- Keep the body concise: about 110 to 170 words.
+- Do not include frontmatter.
+- Prefer 2 to 4 tags.
+- If a title was provided, return that exact title.`;
+}
+
+async function readRecentLogs(limit) {
+  const files = (await readdir(logDir))
+    .filter((file) => file.endsWith(".md"))
+    .sort()
+    .slice(-limit);
+  return Promise.all(files.map((file) => readFile(path.join(logDir, file), "utf8")));
+}
+
+const logOutputSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["title", "summary", "tags", "body"],
+  properties: {
+    title: { type: "string" },
+    summary: { type: "string" },
+    tags: {
+      type: "array",
+      items: { type: "string" },
+    },
+    body: { type: "string" },
+  },
+};
+
+function renderLogMarkdown({ title, gameDate, summary, tags, body }) {
+  return `---
+title: ${JSON.stringify(title)}
+pubDate: ${gameDate}T12:00:00Z
+summary: ${JSON.stringify(summary)}
+${tags.length > 0 ? `tags:\n${tags.map((tag) => `  - ${tag}`).join("\n")}` : "tags: []"}
+---
+
+${body.trim()}
+`;
+}
+
 async function readJson(filePath) {
   return JSON.parse(await readFile(filePath, "utf8"));
 }
@@ -225,6 +350,25 @@ function normaliseIsoDate(value) {
     throw new Error(`Invalid ISO date for --departure: "${value}".`);
   }
   return date.toISOString();
+}
+
+function normaliseGameDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/u.test(value)) {
+    throw new Error(`Invalid game date for --date: "${value}". Use YYYY-MM-DD.`);
+  }
+  const date = new Date(`${value}T00:00:00Z`);
+  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) {
+    throw new Error(`Invalid game date for --date: "${value}".`);
+  }
+  return value;
+}
+
+function currentGameDate() {
+  const today = new Date();
+  const gameYear = today.getFullYear() + 1288;
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${gameYear}-${month}-${day}`;
 }
 
 function requireString(value, flag) {
@@ -260,6 +404,7 @@ Usage:
   npm run carrier -- sync-position [--status <text>] [--location-note <text>] [--dry-run]
   npm run carrier -- schedule-jump --title <title> --destination <system> --departure <iso-date> [--notes <text>] [--dry-run]
   npm run carrier -- commit [--dry-run]
+  npm run carrier -- generate-log --topic <text> [--date <yyyy-mm-dd>] [--title <text>] [--dry-run]
 `);
 }
 
@@ -278,6 +423,15 @@ function quoteArgs(args) {
     .join(" ");
 }
 
+function titleToSlug(value) {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/gu, "")
+    .replace(/[^a-z0-9]+/gu, "-")
+    .replace(/^-+|-+$/gu, "");
+}
+
 async function runGit(args) {
   await new Promise((resolve, reject) => {
     const child = spawn("git", args, {
@@ -292,6 +446,41 @@ async function runGit(args) {
         return;
       }
       reject(new Error(`git ${args[0]} failed with exit code ${code}.`));
+    });
+  });
+}
+
+async function runCodexExec({ prompt, schemaPath, outputPath }) {
+  await new Promise((resolve, reject) => {
+    const child = spawn(
+      "codex",
+      [
+        "--ask-for-approval",
+        "never",
+        "exec",
+        "--ephemeral",
+        "--sandbox",
+        "read-only",
+        "--output-schema",
+        schemaPath,
+        "--output-last-message",
+        outputPath,
+        "-",
+      ],
+      {
+        cwd: projectRoot,
+        stdio: ["pipe", "inherit", "inherit"],
+      },
+    );
+
+    child.stdin.end(prompt);
+    child.on("error", reject);
+    child.on("exit", (code) => {
+      if (code === 0) {
+        resolve();
+        return;
+      }
+      reject(new Error(`codex exec failed with exit code ${code}.`));
     });
   });
 }
