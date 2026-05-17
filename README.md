@@ -48,9 +48,12 @@ npm run carrier -- schedule-jump \
   --destination "Colonia" \
   --departure "3312-04-26T09:00:00Z" \
   --notes "Please ensure your ship is ready for departure."
+
+# Stage carrier/departure data, commit it and push it.
+npm run carrier -- commit
 ```
 
-Use `--dry-run` with either command to preview the change without writing files.
+Use `--dry-run` with any command to preview the change without writing files or running Git.
 
 ## Notes
 

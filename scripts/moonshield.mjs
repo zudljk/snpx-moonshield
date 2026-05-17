@@ -2,6 +2,7 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { spawn } from "node:child_process";
 import path from "node:path";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -30,6 +31,11 @@ async function main() {
 
   if (command === "schedule-jump") {
     await scheduleJump(args);
+    return;
+  }
+
+  if (command === "commit") {
+    await commitStatusUpdate(args);
     return;
   }
 
@@ -115,6 +121,25 @@ async function scheduleJump(args) {
   console.log(`Departure: ${departureTime}`);
   console.log(`Boarding closes: ${boardingDeadline}`);
   if (previousActive) console.log(`Previous departure marked completed: ${previousActive.title}`);
+}
+
+async function commitStatusUpdate(args) {
+  const message = `Carrier status update ${formatLocalMinute(new Date())}`;
+  const commands = [
+    ["add", "src/data/carrier.json", "src/data/departures.json"],
+    ["commit", "-m", message],
+    ["push"],
+  ];
+
+  if (args["dry-run"]) {
+    console.log("Would run:");
+    for (const command of commands) console.log(`git ${quoteArgs(command)}`);
+    return;
+  }
+
+  for (const command of commands) {
+    await runGit(command);
+  }
 }
 
 function extractStationSystem(html) {
@@ -234,5 +259,39 @@ function printHelp() {
 Usage:
   npm run carrier -- sync-position [--status <text>] [--location-note <text>] [--dry-run]
   npm run carrier -- schedule-jump --title <title> --destination <system> --departure <iso-date> [--notes <text>] [--dry-run]
+  npm run carrier -- commit [--dry-run]
 `);
+}
+
+function formatLocalMinute(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function quoteArgs(args) {
+  return args
+    .map((arg) => (/[\s"]/u.test(arg) ? JSON.stringify(arg) : arg))
+    .join(" ");
+}
+
+async function runGit(args) {
+  await new Promise((resolve, reject) => {
+    const child = spawn("git", args, {
+      cwd: projectRoot,
+      stdio: "inherit",
+    });
+
+    child.on("error", reject);
+    child.on("exit", (code) => {
+      if (code === 0) {
+        resolve();
+        return;
+      }
+      reject(new Error(`git ${args[0]} failed with exit code ${code}.`));
+    });
+  });
 }
