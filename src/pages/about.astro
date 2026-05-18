@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import carrier from "../data/carrier.json";
 import type { CarrierData } from "../types";
+import { Content as WelcomeContent, frontmatter as welcome } from "../content/welcome.md";
 
 const carrierData = carrier as CarrierData;
 ---
@@ -11,7 +12,7 @@ const carrierData = carrier as CarrierData;
   description={carrierData.shortGreeting}
 >
   <section class="section">
-    <div class="container prose-grid">
+    <div class="container about-layout">
       <div class="section-heading">
         <p class="eyebrow">About the carrier</p>
         <h1>{carrierData.name}</h1>
@@ -23,11 +24,29 @@ const carrierData = carrier as CarrierData;
             href="https://www.stellanebula.de/"
             target="_blank"
             rel="noopener noreferrer">Stellanebula Project</a
-          >, a coalition of independent pilots and
+          >, a coalition of independent pilots and explorers.
         </p>
       </div>
 
-      <div class="content-panel">
+      <div class="about-welcome">
+        <article class="content-panel about-welcome-copy">
+          <h2>{welcome.title}</h2>
+          <WelcomeContent />
+        </article>
+
+        {welcome.image && (
+          <div class="panel about-welcome-media">
+            <div class="portrait-frame portrait-owner">
+              <img
+                src={welcome.image}
+                alt={welcome.imageAlt ?? welcome.title}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div class="content-panel about-details">
         <h2>Purpose</h2>
         <p>
           The carrier maintains a stable port for commanders moving between the

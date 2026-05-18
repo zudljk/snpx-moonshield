@@ -566,6 +566,39 @@ dd,
   gap: 1.5rem;
 }
 
+.about-layout {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.about-welcome {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.42fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.about-welcome-copy {
+  padding: clamp(1.35rem, 2vw, 2rem);
+}
+
+.about-welcome-copy h2 {
+  margin-top: 0;
+}
+
+.about-welcome-media {
+  padding: 1rem;
+}
+
+.portrait-owner {
+  aspect-ratio: 1 / 1;
+  margin-bottom: 0;
+}
+
+.about-details {
+  padding: clamp(1.35rem, 2vw, 2rem);
+}
+
 .content-panel :is(h2, h3) {
   margin-top: 1.75rem;
 }
@@ -593,6 +626,7 @@ dd,
 @media (max-width: 960px) {
   .header-inner,
   .footer-inner,
+  .about-welcome,
   .crew-profile-header,
   .grid-2,
   .hero-grid,
