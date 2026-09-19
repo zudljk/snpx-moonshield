@@ -9,5 +9,16 @@
     "boardingDeadline": "3312-04-26T08:50:00Z",
     "status": "completed",
     "notes": "Returning to HIP 117029 after a successful expedition. Looking forward to sharing discoveries and experiences with the community. Safe travels to all fellow explorers!"
+  },
+  {
+    "title": "3312 Formidine Rift expedition",
+    "originSystem": "HIP 90833",
+    "originSystemId": 91036,
+    "destinationSystem": "Overview",
+    "destinationSystemId": 4804616,
+    "departureTime": "3312-09-21T15:30:00.000Z",
+    "boardingDeadline": "3312-09-21T15:20:00.000Z",
+    "status": "boarding",
+    "notes": ""
   }
 ]
