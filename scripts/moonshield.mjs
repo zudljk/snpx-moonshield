@@ -12,10 +12,12 @@ const departuresPath = path.join(projectRoot, "src/data/departures.json");
 const logDir = path.join(projectRoot, "src/content/log");
 const activeStatuses = new Set(["scheduled", "boarding", "delayed"]);
 
-main().catch((error) => {
-  console.error(`Error: ${error.message}`);
-  process.exitCode = 1;
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(`Error: ${error.message}`);
+    process.exitCode = 1;
+  });
+}
 
 async function main() {
   const [command, ...argv] = process.argv.slice(2);
@@ -196,22 +198,33 @@ function extractStationSystem(html) {
   return systems[0];
 }
 
-function extractSearchSystem(html, requestedName) {
+export function extractSearchSystem(html, requestedName) {
   const systems = extractSystemLinks(html);
   if (systems.length === 0) {
     throw new Error("Could not find a star-system link on the system search page.");
   }
 
   const exactMatches = dedupeSystems(
-    systems.filter((system) => system.name.toLowerCase() === requestedName.toLowerCase()),
+    systems.filter((system) => system.name.toLowerCase() === requestedName.trim().toLowerCase()),
   );
   if (exactMatches.length === 1) return exactMatches[0];
 
   const uniqueSystems = dedupeSystems(systems);
-  if (uniqueSystems.length === 1) return uniqueSystems[0];
+  // A direct system page may only link to itself through the "Overview" tab.
+  // Its title supplies the name; never treat a navigation label as a system name.
+  const title = html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i);
+  const titleName = title && decodeHtml(stripTags(title[1]))
+    .match(/^\s*(.+?)\s+- star system\s*\|/i)?.[1].trim();
+  const systemIds = new Set(systems.map((system) => system.id));
+  if (
+    titleName?.toLowerCase() === requestedName.trim().toLowerCase() &&
+    systemIds.size === 1
+  ) {
+    return { id: systems[0].id, name: titleName };
+  }
 
   throw new Error(
-    `Ambiguous star-system result for "${requestedName}": ${uniqueSystems
+    `Could not unambiguously confirm star-system result for "${requestedName}": ${uniqueSystems
       .map((system) => `${system.name} (${system.id})`)
       .join(", ")}.`,
   );

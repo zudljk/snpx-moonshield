@@ -61,6 +61,10 @@ npm run carrier -- generate-log \
 
 Use `--dry-run` with any command to preview the change without writing files or running Git.
 
+## Planned improvements
+
+- Investigate a future FCOC Discord publishing workflow for passenger trips. The inactive Fleet Carrier Management System accepted events from an EDMC plugin and forwarded carrier updates to a special Fleet Carrier Owner's Club channel. FCOC still appears to have the webhook path available for commanders who apply for the required role, which creates a carrier-specific channel. If Moonshield later supports longer passenger routes, review the FCMS source code on GitHub and consider adapting the relevant EDMC/plugin-to-webhook pieces with FCOC admin approval.
+
 ## Notes
 
 - The site is fully static and uses no backend, database, authentication or external APIs.
