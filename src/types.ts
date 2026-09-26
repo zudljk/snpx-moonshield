@@ -39,4 +39,5 @@ export interface DepartureData {
   boardingDeadline: string;
   status: DepartureStatus;
   notes: string;
+  itinerary?: string;
 }

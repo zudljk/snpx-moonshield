@@ -51,4 +51,7 @@ const { departure, featured = false } = Astro.props;
     </div>
   </dl>
   <p>{departure.notes}</p>
+  {departure.itinerary && (
+    <a class="card-link" href={`/itinerary/${encodeURIComponent(departure.itinerary)}/`}>Itinerary</a>
+  )}
 </article>

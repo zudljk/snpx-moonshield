@@ -19,6 +19,7 @@
     "departureTime": "3312-09-21T15:30:00.000Z",
     "boardingDeadline": "3312-09-21T15:20:00.000Z",
     "status": "boarding",
-    "notes": ""
+    "notes": "",
+    "itinerary": "323222D0-B9C9-11F1-9E6C-D258A06F1FBD"
   }
 ]

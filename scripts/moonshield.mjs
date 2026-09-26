@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
-import { readFile, readdir, writeFile, mkdtemp, rm } from "node:fs/promises";
+import { readFile, readdir, writeFile, mkdtemp, rm, mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { validateItineraryId } from "../src/utils/itinerary.mjs";
+import { calculateItinerary, parseCapacityUsed, waitForItinerary } from "./spansh.mjs";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const carrierPath = path.join(projectRoot, "src/data/carrier.json");
@@ -33,7 +35,7 @@ async function main() {
     return;
   }
 
-  if (command === "schedule-jump") {
+  if (command === "schedule-jump" || command === "scheduled-jump") {
     await scheduleJump(args);
     return;
   }
@@ -86,6 +88,9 @@ async function scheduleJump(args) {
   const destination = requireString(args.destination, "--destination");
   const departureTime = normaliseIsoDate(requireString(args.departure, "--departure"));
   const notes = typeof args.notes === "string" ? args.notes : "";
+  let itinerary = args.itinerary === undefined ? undefined : validateItineraryId(requireString(args.itinerary, "--itinerary"));
+  const capacityUsed = args["capacity-used"] === undefined ? undefined : parseCapacityUsed(args["capacity-used"]);
+  if (itinerary && capacityUsed !== undefined) throw new Error("Use either --itinerary or --capacity-used, not both.");
 
   const [carrier, departures, destinationHtml] = await Promise.all([
     readJson(carrierPath),
@@ -103,6 +108,21 @@ async function scheduleJump(args) {
   }
 
   const destinationSystem = extractSearchSystem(destinationHtml, destination);
+  let itineraryData;
+  if (!args["dry-run"]) {
+    if (capacityUsed !== undefined) {
+      console.log("Calculating Spansh itinerary...");
+      const calculated = await calculateItinerary(carrier.currentSystem, destinationSystem.name, capacityUsed);
+      itinerary = calculated.id;
+      itineraryData = calculated.data;
+    } else if (itinerary) {
+      itineraryData = await waitForItinerary(itinerary);
+    }
+  } else if (capacityUsed !== undefined) {
+    console.log(`Would calculate Spansh itinerary with capacity_used=${capacityUsed}, capacity=25000, mass=25000.`);
+  } else if (itinerary) {
+    console.log(`Would download Spansh itinerary ${itinerary}.`);
+  }
   const boardingDeadline = new Date(new Date(departureTime).getTime() - 10 * 60_000).toISOString();
   const updatedDepartures = departures.map((departure) => ({ ...departure }));
   const previousActive = [...updatedDepartures]
@@ -121,21 +141,30 @@ async function scheduleJump(args) {
     boardingDeadline,
     status: "boarding",
     notes,
+    ...(itinerary !== undefined ? { itinerary } : {}),
   });
 
-  if (!args["dry-run"]) await writeJson(departuresPath, updatedDepartures);
+  if (!args["dry-run"]) {
+    if (itineraryData) {
+      const directory = path.join(projectRoot, "src/data/itinerary");
+      await mkdir(directory, { recursive: true });
+      await writeJson(path.join(directory, `${itinerary}.json`), itineraryData);
+    }
+    await writeJson(departuresPath, updatedDepartures);
+  }
 
   console.log(`${args["dry-run"] ? "Would schedule" : "Scheduled"}: ${title}`);
   console.log(`${carrier.currentSystem} -> ${destinationSystem.name}`);
   console.log(`Departure: ${departureTime}`);
   console.log(`Boarding closes: ${boardingDeadline}`);
+  if (itinerary) console.log(`Itinerary: ${itinerary}`);
   if (previousActive) console.log(`Previous departure marked completed: ${previousActive.title}`);
 }
 
 async function commitStatusUpdate(args) {
   const message = `Carrier status update ${formatLocalMinute(new Date())}`;
   const commands = [
-    ["add", "src/data/carrier.json", "src/data/departures.json", "src/content/log/*.md"],
+    ["add", "src/data/carrier.json", "src/data/departures.json", "src/data/itinerary", "src/content/log/*.md"],
     ["commit", "-m", message],
     ["push"],
   ];
@@ -415,7 +444,8 @@ function printHelp() {
 
 Usage:
   npm run carrier -- sync-position [--status <text>] [--location-note <text>] [--dry-run]
-  npm run carrier -- schedule-jump --title <title> --destination <system> --departure <iso-date> [--notes <text>] [--dry-run]
+  npm run carrier -- schedule-jump --title <title> --destination <system> --departure <iso-date> [--notes <text>] [--capacity-used <0-25000> | --itinerary <uuid>] [--dry-run]
+  scheduled-jump is an alias for schedule-jump. --capacity-used calculates a Spansh route; --itinerary imports an existing job. Routes are saved locally. Dry runs do not submit Spansh jobs or download routes.
   npm run carrier -- commit [--dry-run]
   npm run carrier -- generate-log --topic <text> [--date <yyyy-mm-dd>] [--title <text>] [--dry-run]
 `);
