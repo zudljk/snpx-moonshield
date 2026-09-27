@@ -3,9 +3,9 @@
   "callsign": "HHY-NTG",
   "carrierId": "HHY-NTG",
   "stationId": 356014,
-  "currentSystem": "HIP 90833",
-  "currentSystemId": 91036,
-  "status": "Refueling",
+  "currentSystem": "Hegeia AZ-E c25-4",
+  "currentSystemId": 4838193,
+  "status": "En Route",
   "role": [
     "Exploration Support",
     "Long-range Transport",
@@ -13,6 +13,6 @@
   ],
   "welcomeMessage": "Stellanebula Project welcomes all licensed pilots, expedition crews and independent traders aboard [SNPX] Moonshield. Respect the hangar deck, honor the queue and keep your manifests current.",
   "shortGreeting": "Welcome to fleet carrier [SNPX] Moonshield. A Stellanebula Project carrier. We are here to support your exploration, trade and transport needs across the galaxy.",
-  "locationNote": "Holding position at HIP 90833.",
-  "lastPositionSyncAt": "2026-09-19T18:14:13.338Z"
+  "locationNote": "Holding position at Hegeia AZ-E c25-4.",
+  "lastPositionSyncAt": "2026-09-27T10:57:08.524Z"
 }

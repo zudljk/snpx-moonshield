@@ -76,6 +76,14 @@ npm run carrier -- schedule-jump \
   --capacity-used 5208
 ```
 
+## Itinerary progress
+
+`sync-position` updates the local itinerary of the latest active departure (`scheduled`, `boarding` or `delayed`). It searches for the first not-yet-visited entry matching the refreshed carrier system, marks that entry and all earlier stations as `visited`, and marks the matching entry as `current`. Completed and cancelled departures are not updated. Without a matching unvisited entry, the stored progress is left unchanged. Routes without progress fields initially show all stations as upcoming.
+
+The itinerary page renders the saved state at build time, distinguishing visited stations, the current position and upcoming stations. Run a build and deploy after syncing to publish the updated progress. `sync-position --dry-run` previews the progress change without writing either file.
+
+Known limitation: for a route such as A → B → C → B → A, repeated syncs while still at B advance from the first B to the second B, marking C visited as well. The sync only considers unvisited entries and does not detect whether the carrier actually moved. If there is no match, the displayed current position remains the last recorded route position.
+
 ## Planned improvements
 
 - Investigate a future FCOC Discord publishing workflow for passenger trips. The inactive Fleet Carrier Management System accepted events from an EDMC plugin and forwarded carrier updates to a special Fleet Carrier Owner's Club channel. FCOC still appears to have the webhook path available for commanders who apply for the required role, which creates a carrier-specific channel. If Moonshield later supports longer passenger routes, review the FCMS source code on GitHub and consider adapting the relevant EDMC/plugin-to-webhook pieces with FCOC admin approval.

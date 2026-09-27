@@ -39,8 +39,10 @@ const distanceFormat = new Intl.NumberFormat("en", { maximumFractionDigits: 2 })
               <th scope="col">Fuel used (t)</th>
             </tr></thead>
             <tbody>
-              {jumps.map((jump) => <tr>
-                <th scope="row"><span class="system-name">{jump.name}
+              {jumps.map((jump) => <tr class:list={{ visited: jump.visited && !jump.current, current: jump.current }} aria-current={jump.current ? "location" : undefined}>
+                <th scope="row"><span class="system-name"><span>{jump.name}
+                  <span class="route-status">{jump.current ? "Current position" : jump.visited ? "Visited" : "Upcoming"}</span>
+                </span>
                   <button type="button" class="copy-system" data-system={jump.name} aria-label={`Copy system name: ${jump.name}`} title="Copy system name">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
                       <rect x="8" y="8" width="12" height="12" rx="2" />
@@ -86,6 +88,12 @@ const distanceFormat = new Intl.NumberFormat("en", { maximumFractionDigits: 2 })
   tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
   td { font-variant-numeric: tabular-nums; white-space: nowrap; }
   .system-name { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .route-status { display: block; margin-top: 0.25rem; font-size: 0.8rem; color: var(--text-muted); }
+  tr.visited { background: var(--ok-soft); }
+  tr.visited .route-status { color: var(--ok); }
+  tr.current { background: var(--amber-soft); }
+  tr.current th { box-shadow: inset 3px 0 var(--amber); }
+  tr.current .route-status { color: var(--amber); font-weight: 600; }
   .copy-system { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-elevated); color: var(--amber); cursor: pointer; }
   .copy-system:hover { background: var(--amber-soft); }
   .copy-system:focus-visible, .itinerary-table:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }

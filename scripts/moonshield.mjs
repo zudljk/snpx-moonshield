@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { validateItineraryId } from "../src/utils/itinerary.mjs";
+import { advanceItinerary, validateItineraryId } from "../src/utils/itinerary.mjs";
 import { calculateItinerary, parseCapacityUsed, waitForItinerary } from "./spansh.mjs";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -73,7 +73,27 @@ async function syncPosition(args) {
     lastPositionSyncAt: new Date().toISOString(),
   };
 
-  if (!args["dry-run"]) await writeJson(carrierPath, nextCarrier);
+  const departures = await readJson(departuresPath);
+  const activeDeparture = departures
+    .filter((departure) => activeStatuses.has(departure.status))
+    .sort((left, right) => Date.parse(right.departureTime) - Date.parse(left.departureTime))[0];
+  let progress;
+  let itineraryPath;
+  if (activeDeparture?.itinerary) {
+    const id = validateItineraryId(activeDeparture.itinerary);
+    itineraryPath = path.join(projectRoot, "src/data/itinerary", `${id}.json`);
+    progress = advanceItinerary(await readJson(itineraryPath), system.name);
+  }
+
+  if (!args["dry-run"]) {
+    if (progress?.index >= 0) await writeJson(itineraryPath, progress.data);
+    await writeJson(carrierPath, nextCarrier);
+  }
+  if (progress) {
+    console.log(progress.index >= 0
+      ? `${args["dry-run"] ? "Would mark" : "Marked"} itinerary stations through ${progress.index + 1} as visited; current: ${system.name}.`
+      : `No unvisited itinerary entry for ${system.name}; progress unchanged.`);
+  }
   console.log(
     [
       `${args["dry-run"] ? "Would update" : "Updated"} ${carrier.name}:`,

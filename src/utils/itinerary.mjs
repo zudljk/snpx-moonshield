@@ -5,6 +5,27 @@ export function validateItineraryId(id) {
   return id;
 }
 
+export function advanceItinerary(data, systemName) {
+  const jumps = validateItinerary(data, data.job ?? "local route");
+  const index = jumps.findIndex((jump) => !jump.visited &&
+    jump.name.trim().toLowerCase() === systemName.trim().toLowerCase());
+  if (index === -1) return { data, index };
+  return {
+    index,
+    data: {
+      ...data,
+      result: {
+        ...data.result,
+        jumps: jumps.map((jump, position) => ({
+          ...jump,
+          visited: jump.visited === true || position <= index,
+          current: position === index,
+        })),
+      },
+    },
+  };
+}
+
 export async function fetchItinerary(id) {
   validateItineraryId(id);
   try {
