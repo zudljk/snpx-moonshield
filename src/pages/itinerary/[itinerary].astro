@@ -43,12 +43,18 @@ const distanceFormat = new Intl.NumberFormat("en", { maximumFractionDigits: 2 })
                 <th scope="row"><span class="system-name"><span>{jump.name}
                   <span class="route-status">{jump.current ? "Current position" : jump.visited ? "Visited" : "Upcoming"}</span>
                 </span>
+                  <span class="copy-control">
                   <button type="button" class="copy-system" data-system={jump.name} aria-label={`Copy system name: ${jump.name}`} title="Copy system name">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                    <svg class="copy-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
                       <rect x="8" y="8" width="12" height="12" rx="2" />
                       <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
                     </svg>
+                    <svg class="copied-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
                   </button>
+                  <span class="copy-feedback" aria-hidden="true"></span>
+                  </span>
                 </span></th>
                 <td>{distanceFormat.format(jump.distance)}</td>
                 <td>{distanceFormat.format(jump.distance_to_destination)}</td>
@@ -66,13 +72,31 @@ const distanceFormat = new Intl.NumberFormat("en", { maximumFractionDigits: 2 })
 <script>
   const status = document.querySelector<HTMLElement>("#copy-status");
   document.querySelectorAll<HTMLButtonElement>(".copy-system").forEach((button) => {
+    const control = button.closest<HTMLElement>(".copy-control")!;
+    const feedback = control.querySelector<HTMLElement>(".copy-feedback")!;
+    let resetTimer: ReturnType<typeof setTimeout>;
     button.addEventListener("click", async () => {
       const name = button.dataset.system!;
+      clearTimeout(resetTimer);
+      delete control.dataset.state;
+      feedback.textContent = "";
+      button.disabled = true;
+      if (status) status.textContent = "";
       try {
         await navigator.clipboard.writeText(name);
+        control.dataset.state = "copied";
+        feedback.textContent = "Copied!";
         if (status) status.textContent = `Copied ${name} to clipboard.`;
       } catch {
+        control.dataset.state = "error";
+        feedback.textContent = "Copy failed";
         if (status) status.textContent = `Could not copy ${name}. Please select and copy the system name manually.`;
+      } finally {
+        button.disabled = false;
+        resetTimer = setTimeout(() => {
+          delete control.dataset.state;
+          feedback.textContent = "";
+        }, 3000);
       }
     });
   });
@@ -96,6 +120,16 @@ const distanceFormat = new Intl.NumberFormat("en", { maximumFractionDigits: 2 })
   tr.current .route-status { color: var(--amber); font-weight: 600; }
   .copy-system { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-elevated); color: var(--amber); cursor: pointer; }
   .copy-system:hover { background: var(--amber-soft); }
+  .copy-control { display: grid; justify-items: center; flex-shrink: 0; width: 6rem; }
+  .copy-feedback { min-height: 1.4em; margin-top: 0.2rem; font-size: 0.75rem; white-space: nowrap; }
+  .copied-icon { display: none; }
+  .copy-control[data-state="copied"] { color: var(--ok); }
+  .copy-control[data-state="copied"] .copy-system { color: var(--ok); border-color: var(--ok); background: var(--ok-soft); }
+  .copy-control[data-state="copied"] .copy-icon { display: none; }
+  .copy-control[data-state="copied"] .copied-icon { display: block; }
+  .copy-control[data-state="error"] { color: var(--danger); }
+  .copy-control[data-state="error"] .copy-system { color: var(--danger); border-color: var(--danger); background: var(--danger-soft); }
+  .copy-system:disabled { cursor: wait; }
   .copy-system:focus-visible, .itinerary-table:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
   #copy-status { min-height: 1.5em; color: var(--text-muted); }
 </style>
