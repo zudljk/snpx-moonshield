@@ -173,7 +173,7 @@
         "y": 130,
         "z": -2531.21875,
         "visited": true,
-        "current": true
+        "current": false
       },
       {
         "distance": 499.863924842927,
@@ -191,7 +191,7 @@
         "x": -2920.34375,
         "y": 115.21875,
         "z": -2856,
-        "visited": false,
+        "visited": true,
         "current": false
       },
       {
@@ -210,7 +210,7 @@
         "x": -3248.34375,
         "y": 131.28125,
         "z": -3233,
-        "visited": false,
+        "visited": true,
         "current": false
       },
       {
@@ -229,7 +229,7 @@
         "x": -3597.6875,
         "y": 114.90625,
         "z": -3590.25,
-        "visited": false,
+        "visited": true,
         "current": false
       },
       {
@@ -248,8 +248,8 @@
         "x": -3937.75,
         "y": 71.5625,
         "z": -3954.1875,
-        "visited": false,
-        "current": false
+        "visited": true,
+        "current": true
       },
       {
         "distance": 499.761017105926,
