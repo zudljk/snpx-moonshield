@@ -249,7 +249,7 @@
         "y": 71.5625,
         "z": -3954.1875,
         "visited": true,
-        "current": true
+        "current": false
       },
       {
         "distance": 499.761017105926,
@@ -267,8 +267,8 @@
         "x": -4265.4375,
         "y": 61,
         "z": -4331.375,
-        "visited": false,
-        "current": false
+        "visited": true,
+        "current": true
       },
       {
         "distance": 499.832509056159,
