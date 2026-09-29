@@ -3,8 +3,8 @@
   "callsign": "HHY-NTG",
   "carrierId": "HHY-NTG",
   "stationId": 356014,
-  "currentSystem": "IC 1805 Sector FR-L c8-6",
-  "currentSystemId": 4841467,
+  "currentSystem": "Hypoae Ain EN-B d13-11",
+  "currentSystemId": 4841566,
   "status": "En Route",
   "role": [
     "Exploration Support",
@@ -13,6 +13,6 @@
   ],
   "welcomeMessage": "Stellanebula Project welcomes all licensed pilots, expedition crews and independent traders aboard [SNPX] Moonshield. Respect the hangar deck, honor the queue and keep your manifests current.",
   "shortGreeting": "Welcome to fleet carrier [SNPX] Moonshield. A Stellanebula Project carrier. We are here to support your exploration, trade and transport needs across the galaxy.",
-  "locationNote": "Holding position at IC 1805 Sector FR-L c8-6.",
-  "lastPositionSyncAt": "2026-09-28T21:19:54.299Z"
+  "locationNote": "Holding position at Hypoae Ain EN-B d13-11.",
+  "lastPositionSyncAt": "2026-09-29T17:43:09.553Z"
 }
