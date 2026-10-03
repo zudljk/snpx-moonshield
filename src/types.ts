@@ -6,6 +6,9 @@ export interface CarrierData {
   currentSystem: string;
   /** Journal SystemAddress / Spansh id64; absent when not yet resolved. */
   currentSystemAddress?: string;
+  previousSystem?: string;
+  previousSystemAddress?: string;
+  lastPositionObservation?: { eventId: string; observedAt: string; source: string };
   lastPositionSyncAt?: string;
   status: string;
   role: string[];

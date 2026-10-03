@@ -1,0 +1,1 @@
+"""Moonshield EDMC plugin."""

@@ -11,12 +11,12 @@ export function getStaticPaths() {
     if (!data) throw new Error(`Missing local itinerary ${id}.json. Import the Spansh result before building.`);
     return {
       params: { itinerary: id! },
-      props: { jumps: validateItinerary(data, id) },
+      props: { jumps: validateItinerary(data, id), progress: data.moonshieldProgress },
     };
   });
 }
 
-const { jumps } = Astro.props;
+const { jumps, progress } = Astro.props;
 const distanceFormat = new Intl.NumberFormat("en", { maximumFractionDigits: 2 });
 ---
 
@@ -29,6 +29,7 @@ const distanceFormat = new Intl.NumberFormat("en", { maximumFractionDigits: 2 })
         {jumps.length > 0 && <p class="section-intro">{jumps[0].name} to {jumps[jumps.length - 1].name}</p>}
         <a class="back-link" href="/departures">Back to departures</a>
       </div>
+      {progress?.status === "uncertain" && <p class="panel" role="status">Route progress needs confirmation. {progress.message} The highlighted stop is the last confirmed route position.</p>}
       {jumps.length ? (
         <div class="panel itinerary-table" tabindex="0" role="region" aria-label="Itinerary stations">
           <table>
@@ -41,7 +42,7 @@ const distanceFormat = new Intl.NumberFormat("en", { maximumFractionDigits: 2 })
             <tbody>
               {jumps.map((jump) => <tr class:list={{ visited: jump.visited && !jump.current, current: jump.current }} aria-current={jump.current ? "location" : undefined}>
                 <th scope="row"><span class="system-name"><span>{jump.name}
-                  <span class="route-status">{jump.current ? "Current position" : jump.visited ? "Visited" : "Upcoming"}</span>
+                  <span class="route-status">{jump.current ? (progress?.status === "uncertain" ? "Last confirmed position" : "Current position") : jump.visited ? "Visited" : jump.skipped ? "Not observed" : "Upcoming"}</span>
                 </span>
                   <span class="copy-control">
                   <button type="button" class="copy-system" data-system={jump.name} aria-label={`Copy system name: ${jump.name}`} title="Copy system name">

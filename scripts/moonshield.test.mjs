@@ -28,7 +28,7 @@ async function fixture(t, fetchSource) {
   const root = await realpath(await mkdtemp(path.join(tmpdir(), "moonshield-ids-")));
   t.after(() => rm(root, { recursive: true, force: true }));
   for (const dir of ["scripts", "src/utils", "src/data"]) await mkdir(path.join(root, dir), { recursive: true });
-  for (const file of ["scripts/moonshield.mjs", "scripts/spansh.mjs", "src/utils/itinerary.mjs", "src/utils/identifiers.mjs"]) {
+  for (const file of ["scripts/moonshield.mjs", "scripts/spansh.mjs", "src/utils/itinerary.mjs", "src/utils/identifiers.mjs", "src/utils/position.mjs"]) {
     await copyFile(new URL(`../${file}`, import.meta.url), path.join(root, file));
   }
   const save = (file, data) => writeFile(path.join(root, "src/data", file), JSON.stringify(data));

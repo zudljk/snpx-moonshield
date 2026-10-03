@@ -5,6 +5,8 @@ import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
+import { applyPositionObservation } from "../src/utils/position.mjs";
 import { advanceItinerary, validateItineraryId } from "../src/utils/itinerary.mjs";
 import { calculateItinerary, findSystem, parseCapacityUsed, waitForItinerary } from "./spansh.mjs";
 import { inaraCarrierUrl, normaliseGameId } from "../src/utils/identifiers.mjs";
@@ -56,6 +58,7 @@ async function main() {
 
 async function syncPosition(args) {
   const carrier = await readJson(carrierPath);
+  const observedAt = new Date().toISOString();
   const callsign = requireString(carrier.callsign, "carrier.callsign");
   const html = await fetchHtml(inaraCarrierUrl(callsign));
   const system = extractStationSystem(html);
@@ -71,10 +74,15 @@ async function syncPosition(args) {
       console.warn(`System address unresolved for "${system.name}": ${error.message} Using name-based links.`);
     }
   }
+  const observation = applyPositionObservation(carrier, {
+    eventId: randomUUID(), observedAt, source: "inara", name: system.name, systemAddress,
+  });
+  if (!observation.accepted) {
+    console.log(observation.reason);
+    return;
+  }
   const nextCarrier = {
-    ...carrier,
-    currentSystem: system.name,
-    currentSystemAddress: systemAddress,
+    ...observation.carrier,
     status: typeof args.status === "string" ? args.status : carrier.status,
     locationNote:
       typeof args["location-note"] === "string"
@@ -92,17 +100,15 @@ async function syncPosition(args) {
   if (activeDeparture?.itinerary) {
     const id = validateItineraryId(activeDeparture.itinerary);
     itineraryPath = path.join(projectRoot, "src/data/itinerary", `${id}.json`);
-    progress = advanceItinerary(await readJson(itineraryPath), system.name);
+    progress = advanceItinerary(await readJson(itineraryPath), observation.previous, observation.current);
   }
 
   if (!args["dry-run"]) {
-    if (progress?.index >= 0) await writeJson(itineraryPath, progress.data);
+    if (progress) await writeJson(itineraryPath, progress.data);
     await writeJson(carrierPath, nextCarrier);
   }
   if (progress) {
-    console.log(progress.index >= 0
-      ? `${args["dry-run"] ? "Would mark" : "Marked"} itinerary stations through ${progress.index + 1} as visited; current: ${system.name}.`
-      : `No unvisited itinerary entry for ${system.name}; progress unchanged.`);
+    console.log(`${args["dry-run"] ? "Preview: " : ""}${progress.reason}`);
   }
   console.log(
     [

@@ -37,14 +37,14 @@ Moonshield uses Elite's game identifiers, not Inara database IDs:
 
 - `carrierId` is the Journal `CarrierID` / `MarketID` as a decimal string (`"3706829824"` for Moonshield). `callsign` remains `"HHY-NTG"` for display and carrier links.
 - `currentSystemAddress`, `originSystemAddress` and `destinationSystemAddress` hold Journal `SystemAddress` / Spansh `id64` values as decimal strings. Names remain available for display. An unresolved address is omitted, never replaced with an Inara ID.
-- Stored Spansh route entries retain the field name `id64`, also as decimal strings. Route occurrences remain distinct by their index; a system ID alone does not identify an occurrence.
+- Spansh route entries retain their supplied `id64` values and types, including numeric IDs. Conversion to decimal strings happens only when deriving Moonshield-owned identifiers; importing a route does not rewrite its IDs. Route occurrences remain distinct by their index; a system ID alone does not identify an occurrence.
 - If body tracking is added, a body must be identified by both its system address and its system-local `BodyID`.
 
 Inara links use its [documented search URLs](https://inara.cz/elite/inara-api-devguide/): `starsystem/?search=<SystemAddress>` (or a URL-encoded system name when the address is missing) and `station/?search=<callsign>`. No Inara-ID mapping is required. The old `stationId`, `currentSystemId`, `originSystemId` and `destinationSystemId` fields have been removed.
 
 The initial migration takes the carrier ID from the supplied Journal and the current system and active departure addresses from the saved Spansh route. The older completed departure has no locally verified addresses and uses name-based links. Existing route progress and position timestamps are preserved.
 
-`sync-position` still reads the current system name from Inara. It reuses a known address only if the system name is unchanged; otherwise it resolves an exact name match through Spansh. If resolution fails, it updates the name, clears the previous address and reports a warning. `schedule-jump` resolves its destination and any missing origin address through Spansh; failed or ambiguous lookups leave departures unchanged. Numeric IDs outside JavaScript's safe integer range are rejected; large IDs must arrive as decimal strings to avoid silently storing rounded values.
+`sync-position` still reads the current system name from Inara. It reuses a known address only if the system name is unchanged; otherwise it resolves an exact name match through Spansh. If resolution fails, it updates the name, clears the previous address and reports a warning. `schedule-jump` resolves its destination and any missing origin address through Spansh; failed or ambiguous lookups leave departures unchanged. When deriving Moonshield-owned identifiers, numeric IDs outside JavaScript's safe integer range are rejected; large IDs must arrive as decimal strings to avoid silently storing rounded values.
 
 ## Jump control CLI
 
@@ -93,11 +93,23 @@ npm run carrier -- schedule-jump \
 
 ## Itinerary progress
 
-`sync-position` updates the local itinerary of the latest active departure (`scheduled`, `boarding` or `delayed`). It searches for the first not-yet-visited entry matching the refreshed carrier system, marks that entry and all earlier stations as `visited`, and marks the matching entry as `current`. Completed and cancelled departures are not updated. Without a matching unvisited entry, the stored progress is left unchanged. Routes without progress fields initially show all stations as upcoming.
+`sync-position` updates only the itinerary of the latest active departure (`scheduled`, `boarding` or `delayed`). Completed and cancelled departures are untouched. Systems are compared by game address when both sides provide one (Spansh numeric `id64` and Moonshield string addresses are supported); otherwise comparison uses trimmed, case-insensitive names. Spansh IDs are never rewritten.
 
-The itinerary page renders the saved state at build time, distinguishing visited stations, the current position and upcoming stations. Run a build and deploy after syncing to publish the updated progress. `sync-position --dry-run` previews the progress change without writing either file.
+The carrier stores the last confirmed location in `currentSystem` / `currentSystemAddress`, the preceding distinct location in `previousSystem` / `previousSystemAddress`, and the latest observation's `eventId`, `observedAt` and `source` in `lastPositionObservation`. The shared observation handler rejects the latest event ID again and observations with an older or equal timestamp before changing either location or route progress. Repeated observations of the same system do not imply a jump.
 
-Known limitation: for a route such as A → B → C → B → A, repeated syncs while still at B advance from the first B to the second B, marking C visited as well. The sync only considers unvisited entries and does not detect whether the carrier actually moved. If there is no match, the displayed current position remains the last recorded route position.
+Each route stores its zero-based cursor in `moonshieldProgress.currentIndex`, plus `status` (`confirmed` or `uncertain`) and an optional explanatory `message`. Existing routes migrate from their single `current` marker on the next sync. A route without a cursor needs an unambiguous previous location to establish its starting position; a repeated system alone is insufficient.
+
+For each movement, the next leg relative to the cursor has priority. Otherwise, only a unique consecutive pair matching the previous and new systems in the remaining route can advance the cursor. Missing intermediate observations, multiple matching pairs or off-route movements preserve the cursor and visit flags and record an uncertainty message. The actual carrier location is still updated. An unchanged location does not clear an outstanding uncertainty. A later unambiguous movement can recover progress.
+
+Only observed endpoints are newly marked `visited`. Earlier unconfirmed stops receive `skipped: true` and appear as **Not observed**, not as visited. Previously recorded visits are preserved. The itinerary page displays uncertainty and labels the highlighted stop **Last confirmed position** when the carrier's route position is unresolved. Run a build and deploy to publish updates. `sync-position --dry-run` previews changes without writing carrier or itinerary data.
+
+The current Inara polling source uses the request start time and a generated observation ID: Inara does not supply a Journal event timestamp here. Consequently, the ordering guard cannot detect an outdated location on Inara itself. The observation handler is ready for source timestamps and stable event IDs from a future Journal integration. Likewise, an unobserved round trip returning to the same system cannot be inferred from equal endpoints. Historical `visited` flags are retained and are not retroactively verified.
+
+## EDMC plugin
+
+`edmc/Moonshield/` contains the Python plugin for receiving carrier location events on the gaming PC and dispatching them to GitHub. It includes a durable local queue, retry handling and EDMC settings. Build an installable ZIP with `python3 scripts/package-edmc.py`; the result is `artifacts/Moonshield-EDMC.zip`. No project checkout is needed on the gaming PC.
+
+See the [plugin installation guide and event contract](edmc/Moonshield/README.md). Delivery is disabled initially: the receiving GitHub Actions workflow and deployment are the next step, not part of the plugin. Run its tests with `python3 -m unittest discover -s tests/edmc -v`.
 
 ## Planned improvements
 
