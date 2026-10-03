@@ -2,6 +2,7 @@
 import StatusBadge from "./StatusBadge.astro";
 import { departureTone, formatUtcDate } from "../utils/format";
 import type { DepartureData } from "../types";
+import { inaraSystemUrl } from "../utils/identifiers.mjs";
 
 interface Props {
   departure: DepartureData;
@@ -19,7 +20,7 @@ const { departure, featured = false } = Astro.props;
       <h3>{departure.title}</h3>
       <p class="meta-line">
         <a
-          href={`https://inara.cz/elite/starsystem/${departure.originSystemId}/`}
+          href={inaraSystemUrl(departure.originSystem, departure.originSystemAddress)}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -27,7 +28,7 @@ const { departure, featured = false } = Astro.props;
         </a>
         to
         <a
-          href={`https://inara.cz/elite/starsystem/${departure.destinationSystemId}/`}
+          href={inaraSystemUrl(departure.destinationSystem, departure.destinationSystemAddress)}
           target="_blank"
           rel="noopener noreferrer"
         >

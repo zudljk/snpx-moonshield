@@ -31,12 +31,27 @@ npm run preview
 - Planned jumps and boarding windows live in `src/data/departures.json`.
 - A departure’s optional `itinerary` is a Spansh job UUID. The corresponding result is stored in `src/data/itinerary/<uuid>.json`. Builds use only these local files. The page displays `name`, `distance`, `distance_to_destination` and `fuel_used` from `result.jumps`, with a copy button for each system name.
 
+## Game identifiers and Inara links
+
+Moonshield uses Elite's game identifiers, not Inara database IDs:
+
+- `carrierId` is the Journal `CarrierID` / `MarketID` as a decimal string (`"3706829824"` for Moonshield). `callsign` remains `"HHY-NTG"` for display and carrier links.
+- `currentSystemAddress`, `originSystemAddress` and `destinationSystemAddress` hold Journal `SystemAddress` / Spansh `id64` values as decimal strings. Names remain available for display. An unresolved address is omitted, never replaced with an Inara ID.
+- Stored Spansh route entries retain the field name `id64`, also as decimal strings. Route occurrences remain distinct by their index; a system ID alone does not identify an occurrence.
+- If body tracking is added, a body must be identified by both its system address and its system-local `BodyID`.
+
+Inara links use its [documented search URLs](https://inara.cz/elite/inara-api-devguide/): `starsystem/?search=<SystemAddress>` (or a URL-encoded system name when the address is missing) and `station/?search=<callsign>`. No Inara-ID mapping is required. The old `stationId`, `currentSystemId`, `originSystemId` and `destinationSystemId` fields have been removed.
+
+The initial migration takes the carrier ID from the supplied Journal and the current system and active departure addresses from the saved Spansh route. The older completed departure has no locally verified addresses and uses name-based links. Existing route progress and position timestamps are preserved.
+
+`sync-position` still reads the current system name from Inara. It reuses a known address only if the system name is unchanged; otherwise it resolves an exact name match through Spansh. If resolution fails, it updates the name, clears the previous address and reports a warning. `schedule-jump` resolves its destination and any missing origin address through Spansh; failed or ambiguous lookups leave departures unchanged. Numeric IDs outside JavaScript's safe integer range are rejected; large IDs must arrive as decimal strings to avoid silently storing rounded values.
+
 ## Jump control CLI
 
 The repository includes a small operational CLI for keeping carrier movement data current.
 
 ```bash
-# Refresh carrier.json from the configured Inara station page.
+# Refresh carrier.json from Inara using the carrier callsign.
 # If omitted, locationNote becomes "Holding position at <currentSystem>."
 # If omitted, status keeps its current value.
 npm run carrier -- sync-position \
@@ -66,7 +81,7 @@ Add `--capacity-used 5208` to `schedule-jump` to calculate an itinerary automati
 
 Alternatively, `--itinerary "<UUID>"` imports an existing Spansh job before it expires. These two options are mutually exclusive. Both save the result in `src/data/itinerary/<uuid>.json` before updating departures; the `commit` command includes these files. If Spansh lookup or calculation fails, departure data stays unchanged. With neither option, no itinerary is attached. `scheduled-jump` is an alias.
 
-`--dry-run` previews the operation without submitting a Spansh calculation, downloading a route, or writing files. The Inara destination lookup still runs.
+`--dry-run` previews the operation without submitting a Spansh calculation, downloading a route, or writing files. Spansh system-address lookups still run.
 
 ```bash
 npm run carrier -- schedule-jump \

@@ -2,9 +2,7 @@
   {
     "title": "Return to HIP 117029",
     "originSystem": "Colonia",
-    "originSystemId": 77690,
     "destinationSystem": "Dryooe Flyou UH-A b57-8",
-    "destinationSystemId": 1477136,
     "departureTime": "3312-04-26T09:00:00Z",
     "boardingDeadline": "3312-04-26T08:50:00Z",
     "status": "completed",
@@ -13,13 +11,13 @@
   {
     "title": "3312 Formidine Rift expedition",
     "originSystem": "HIP 90833",
-    "originSystemId": 91036,
     "destinationSystem": "Eafots SC-M d7-38",
-    "destinationSystemId": 4804616,
     "departureTime": "3312-09-21T15:30:00.000Z",
     "boardingDeadline": "3312-09-21T15:20:00.000Z",
     "status": "boarding",
     "notes": "",
-    "itinerary": "323222D0-B9C9-11F1-9E6C-D258A06F1FBD"
+    "itinerary": "323222D0-B9C9-11F1-9E6C-D258A06F1FBD",
+    "originSystemAddress": "633407083218",
+    "destinationSystemAddress": "1315040151363"
   }
 ]

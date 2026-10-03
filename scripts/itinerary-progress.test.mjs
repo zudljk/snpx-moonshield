@@ -36,15 +36,15 @@ test("sync-position persists progress only for the latest active route and honor
   const oldId = "323222D0-B9C9-11F1-9E6C-D258A06F1FBE";
   try {
     for (const dir of ["scripts", "src/utils", "src/data/itinerary"]) await mkdir(path.join(root, dir), { recursive: true });
-    for (const file of ["scripts/moonshield.mjs", "scripts/spansh.mjs", "src/utils/itinerary.mjs"]) await copyFile(new URL(`../${file}`, import.meta.url), path.join(root, file));
+    for (const file of ["scripts/moonshield.mjs", "scripts/spansh.mjs", "src/utils/itinerary.mjs", "src/utils/identifiers.mjs"]) await copyFile(new URL(`../${file}`, import.meta.url), path.join(root, file));
     const save = (file, data) => writeFile(path.join(root, file), JSON.stringify(data));
     const read = async file => JSON.parse(await readFile(path.join(root, file), "utf8"));
-    const carrier = { name: "Test", stationId: 1, currentSystem: "A", currentSystemId: 2 };
+    const carrier = { name: "Test", callsign: "HHY-NTG", carrierId: "3706829824", currentSystem: "A", currentSystemAddress: "2" };
     const departures = [{ status: "completed", departureTime: "3312-01-01", itinerary: oldId }, { status: "boarding", departureTime: "3312-02-01", itinerary: id }];
     await save("src/data/carrier.json", carrier);
     await save("src/data/departures.json", departures);
     for (const uuid of [id, oldId]) await save(`src/data/itinerary/${uuid}.json`, route());
-    await writeFile(path.join(root, "mock.mjs"), `globalThis.fetch = async () => new Response('<a href="/elite/starsystem/3/">B</a>');`);
+    await writeFile(path.join(root, "mock.mjs"), `globalThis.fetch = async url => new Response(url.includes("spansh.co.uk") ? JSON.stringify({ min_max: [{ name: "B", id64: 42 }] }) : '<a href="/elite/starsystem/3/">B</a>');`);
     const run = args => execFileSync(process.execPath, ["--import", path.join(root, "mock.mjs"), path.join(root, "scripts/moonshield.mjs"), "sync-position", ...args]);
     run(["--dry-run"]);
     assert.deepEqual(await read("src/data/carrier.json"), carrier);

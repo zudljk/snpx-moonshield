@@ -10,6 +10,7 @@ import carrier from "../data/carrier.json";
 import departures from "../data/departures.json";
 import services from "../data/services.json";
 import { getNextDeparture } from "../utils/format";
+import { inaraCarrierUrl, inaraSystemUrl } from "../utils/identifiers.mjs";
 import type { CarrierData, DepartureData, ServiceData } from "../types";
 
 const carrierData = carrier as CarrierData;
@@ -52,15 +53,11 @@ const featuredServices = servicesData.slice(0, 6);
         <dl class="stat-grid">
           <div>
             <dt>Callsign</dt>
-            <dd>{carrierData.callsign}</dd>
-          </div>
-          <div>
-            <dt>Carrier ID</dt>
-            <dd>{carrierData.carrierId}</dd>
+            <dd><a href={inaraCarrierUrl(carrierData.callsign)} target="_blank" rel="noopener noreferrer">{carrierData.callsign}</a></dd>
           </div>
           <div>
             <dt>System</dt>
-            <dd>{carrierData.currentSystem}</dd>
+            <dd><a href={inaraSystemUrl(carrierData.currentSystem, carrierData.currentSystemAddress)} target="_blank" rel="noopener noreferrer">{carrierData.currentSystem}</a></dd>
           </div>
           <div>
             <dt>Position</dt>

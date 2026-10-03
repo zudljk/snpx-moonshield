@@ -1,10 +1,11 @@
 export interface CarrierData {
   name: string;
   callsign: string;
+  /** Journal CarrierID / MarketID, stored as a decimal string. */
   carrierId: string;
-  stationId: number;
   currentSystem: string;
-  currentSystemId: number;
+  /** Journal SystemAddress / Spansh id64; absent when not yet resolved. */
+  currentSystemAddress?: string;
   lastPositionSyncAt?: string;
   status: string;
   role: string[];
@@ -32,9 +33,9 @@ export type DepartureStatus =
 export interface DepartureData {
   title: string;
   originSystem: string;
-  originSystemId: number;
+  originSystemAddress?: string;
   destinationSystem: string;
-  destinationSystemId: number;
+  destinationSystemAddress?: string;
   departureTime: string;
   boardingDeadline: string;
   status: DepartureStatus;

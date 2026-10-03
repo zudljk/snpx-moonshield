@@ -1,4 +1,5 @@
 import { validateItinerary, validateItineraryId } from "../src/utils/itinerary.mjs";
+import { normaliseGameId } from "../src/utils/identifiers.mjs";
 
 async function request(endpoint, options = {}) {
   const response = await fetch(`https://spansh.co.uk/api/${endpoint}`, {
@@ -19,9 +20,8 @@ export async function findSystem(name) {
   const data = await request(`systems/field_values/system_names?q=${encodeURIComponent(name.trim())}`);
   const matches = (data.min_max ?? []).filter((system) =>
     typeof system.name === "string" && system.name.toLowerCase() === name.trim().toLowerCase());
-  const ids = new Set(matches.map((system) => String(system.id64)));
-  if (ids.size !== 1 || !/^\d+$/.test([...ids][0]) || matches.some((system) =>
-    typeof system.id64 === "number" && !Number.isSafeInteger(system.id64))) {
+  const ids = new Set(matches.map((system) => normaliseGameId(system.id64)));
+  if (ids.size !== 1) {
     throw new Error(`Spansh: no unambiguous exact system match for "${name}".`);
   }
   return [...ids][0];

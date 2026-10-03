@@ -6,7 +6,8 @@ import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { advanceItinerary, validateItineraryId } from "../src/utils/itinerary.mjs";
-import { calculateItinerary, parseCapacityUsed, waitForItinerary } from "./spansh.mjs";
+import { calculateItinerary, findSystem, parseCapacityUsed, waitForItinerary } from "./spansh.mjs";
+import { inaraCarrierUrl, normaliseGameId } from "../src/utils/identifiers.mjs";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const carrierPath = path.join(projectRoot, "src/data/carrier.json");
@@ -55,16 +56,25 @@ async function main() {
 
 async function syncPosition(args) {
   const carrier = await readJson(carrierPath);
-  if (!Number.isInteger(carrier.stationId)) {
-    throw new Error("carrier.json must contain an integer stationId.");
-  }
-
-  const html = await fetchHtml(`https://inara.cz/elite/station/${carrier.stationId}/`);
+  const callsign = requireString(carrier.callsign, "carrier.callsign");
+  const html = await fetchHtml(inaraCarrierUrl(callsign));
   const system = extractStationSystem(html);
+  // The station page identifies the system by name; its link ID belongs to Inara.
+  // A failed lookup must never carry the previous system's address to a new one.
+  let systemAddress;
+  if (system.name.toLowerCase() === carrier.currentSystem?.trim().toLowerCase() && carrier.currentSystemAddress != null) {
+    systemAddress = normaliseGameId(carrier.currentSystemAddress);
+  } else {
+    try {
+      systemAddress = await findSystem(system.name);
+    } catch (error) {
+      console.warn(`System address unresolved for "${system.name}": ${error.message} Using name-based links.`);
+    }
+  }
   const nextCarrier = {
     ...carrier,
     currentSystem: system.name,
-    currentSystemId: system.id,
+    currentSystemAddress: systemAddress,
     status: typeof args.status === "string" ? args.status : carrier.status,
     locationNote:
       typeof args["location-note"] === "string"
@@ -98,7 +108,7 @@ async function syncPosition(args) {
     [
       `${args["dry-run"] ? "Would update" : "Updated"} ${carrier.name}:`,
       `${carrier.currentSystem} -> ${nextCarrier.currentSystem}`,
-      `(Inara system ${nextCarrier.currentSystemId})`,
+      systemAddress ? `(SystemAddress ${systemAddress})` : "(system address unresolved)",
     ].join(" "),
   );
 }
@@ -112,22 +122,25 @@ async function scheduleJump(args) {
   const capacityUsed = args["capacity-used"] === undefined ? undefined : parseCapacityUsed(args["capacity-used"]);
   if (itinerary && capacityUsed !== undefined) throw new Error("Use either --itinerary or --capacity-used, not both.");
 
-  const [carrier, departures, destinationHtml] = await Promise.all([
+  const [carrier, departures] = await Promise.all([
     readJson(carrierPath),
     readJson(departuresPath),
-    fetchHtml(
-      `https://inara.cz/elite/starsystem/?search=${encodeURIComponent(destination)}`,
-    ),
   ]);
 
-  if (!carrier.currentSystem || !Number.isInteger(carrier.currentSystemId)) {
-    throw new Error("carrier.json must contain currentSystem and integer currentSystemId.");
+  if (!carrier.currentSystem) {
+    throw new Error("carrier.json must contain currentSystem.");
   }
   if (!Array.isArray(departures)) {
     throw new Error("departures.json must contain an array.");
   }
 
-  const destinationSystem = extractSearchSystem(destinationHtml, destination);
+  const [originSystemAddress, destinationSystemAddress] = await Promise.all([
+    carrier.currentSystemAddress == null
+      ? findSystem(carrier.currentSystem)
+      : normaliseGameId(carrier.currentSystemAddress),
+    findSystem(destination),
+  ]);
+  const destinationSystem = { name: destination.trim() };
   let itineraryData;
   if (!args["dry-run"]) {
     if (capacityUsed !== undefined) {
@@ -154,9 +167,9 @@ async function scheduleJump(args) {
   updatedDepartures.push({
     title,
     originSystem: carrier.currentSystem,
-    originSystemId: carrier.currentSystemId,
+    originSystemAddress,
     destinationSystem: destinationSystem.name,
-    destinationSystemId: destinationSystem.id,
+    destinationSystemAddress,
     departureTime,
     boardingDeadline,
     status: "boarding",
@@ -247,38 +260,6 @@ function extractStationSystem(html) {
   return systems[0];
 }
 
-export function extractSearchSystem(html, requestedName) {
-  const systems = extractSystemLinks(html);
-  if (systems.length === 0) {
-    throw new Error("Could not find a star-system link on the system search page.");
-  }
-
-  const exactMatches = dedupeSystems(
-    systems.filter((system) => system.name.toLowerCase() === requestedName.trim().toLowerCase()),
-  );
-  if (exactMatches.length === 1) return exactMatches[0];
-
-  const uniqueSystems = dedupeSystems(systems);
-  // A direct system page may only link to itself through the "Overview" tab.
-  // Its title supplies the name; never treat a navigation label as a system name.
-  const title = html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i);
-  const titleName = title && decodeHtml(stripTags(title[1]))
-    .match(/^\s*(.+?)\s+- star system\s*\|/i)?.[1].trim();
-  const systemIds = new Set(systems.map((system) => system.id));
-  if (
-    titleName?.toLowerCase() === requestedName.trim().toLowerCase() &&
-    systemIds.size === 1
-  ) {
-    return { id: systems[0].id, name: titleName };
-  }
-
-  throw new Error(
-    `Could not unambiguously confirm star-system result for "${requestedName}": ${uniqueSystems
-      .map((system) => `${system.name} (${system.id})`)
-      .join(", ")}.`,
-  );
-}
-
 function extractSystemLinks(html) {
   return [...html.matchAll(/<a\b[^>]*href=["']\/(?:elite\/)?starsystem\/(\d+)\/?["'][^>]*>([\s\S]*?)<\/a>/gi)]
     .map((match) => ({
@@ -286,12 +267,6 @@ function extractSystemLinks(html) {
       name: decodeHtml(stripTags(match[2])).trim(),
     }))
     .filter((match) => Number.isInteger(match.id) && match.name);
-}
-
-function dedupeSystems(systems) {
-  const seen = new Map();
-  for (const system of systems) seen.set(`${system.id}:${system.name}`, system);
-  return [...seen.values()];
 }
 
 function stripTags(value) {

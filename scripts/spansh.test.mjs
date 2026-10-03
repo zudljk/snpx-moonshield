@@ -32,6 +32,22 @@ test("rejects approximate and ambiguous system matches", async (t) => {
   await assert.rejects(findSystem("Target"), /exact system match/);
 });
 
+test("route imports preserve Spansh ID types and other payload fields", async t => {
+  const data = {
+    status: "ok",
+    result: {
+      source: "123",
+      jumps: [
+        { ...jumps[0], id64: 123, visited: true },
+        { ...jumps[0], id64: "9007199254740993" },
+        { ...jumps[0] },
+      ],
+    },
+  };
+  t.mock.method(globalThis, "fetch", async () => response(data));
+  assert.deepEqual(await waitForItinerary(id), data);
+});
+
 test("validates capacity including zero", () => {
   assert.equal(parseCapacityUsed("0"), 0);
   assert.equal(parseCapacityUsed("25000"), 25000);
