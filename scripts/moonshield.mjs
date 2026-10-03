@@ -307,13 +307,16 @@ function decodeHtml(value) {
     .replaceAll("&gt;", ">");
 }
 
-async function fetchHtml(url) {
+export async function fetchHtml(url) {
   const response = await fetch(url, {
     headers: {
       "user-agent": "moonshield-jump-control/0.1 (+https://inara.cz/)",
     },
   });
   if (!response.ok) {
+    if (response.status === 503) {
+      throw new Error(`Inara is temporarily unavailable (HTTP 503). Please try again later. URL: ${url}`);
+    }
     throw new Error(`Request failed for ${url}: ${response.status} ${response.statusText}`);
   }
   return response.text();

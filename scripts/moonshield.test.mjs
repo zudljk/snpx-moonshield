@@ -1,6 +1,24 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { extractSearchSystem } from "./moonshield.mjs";
+import { extractSearchSystem, fetchHtml } from "./moonshield.mjs";
+
+test("identifies the CLI and suggests retrying later when Inara returns HTTP 503", async (t) => {
+  const url = "https://inara.cz/elite/station/356014/";
+  const fetchMock = t.mock.method(globalThis, "fetch", async (requestedUrl, options) => {
+    assert.equal(requestedUrl, url);
+    assert.equal(options.headers["user-agent"], "moonshield-jump-control/0.1 (+https://inara.cz/)");
+    return new Response("<html>Station</html>");
+  });
+  assert.equal(await fetchHtml(url), "<html>Station</html>");
+  fetchMock.mock.mockImplementation(async () => new Response("Unavailable", {
+    status: 503, statusText: "Service Unavailable",
+  }));
+  await assert.rejects(fetchHtml(url), /Inara is temporarily unavailable \(HTTP 503\). Please try again later\./);
+  fetchMock.mock.mockImplementation(async () => new Response("Not found", {
+    status: 404, statusText: "Not Found",
+  }));
+  await assert.rejects(fetchHtml(url), /404 Not Found/);
+});
 
 const systemPage = `
   <title>Eafots SC-M d7-38 - star system | Elite:Dangerous | INARA</title>
