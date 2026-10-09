@@ -6,3 +6,5 @@ HighResScreenShot_2026-04-25_18-59-33/*
 *.zip
 unused_img
 .env
+__pycache__/
+edmc/Moonshield/state/

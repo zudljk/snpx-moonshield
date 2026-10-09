@@ -34,7 +34,7 @@ Disabling pauses capture and new delivery attempts; an HTTP request already in f
 
 A timeout after GitHub accepted a request can cause a repeated dispatch. The receiver must deduplicate `eventId` and reject stale `observedAt` values. GitHub may run dispatched workflows concurrently or out of order; sequential HTTP requests do not guarantee sequential workflow completion. The receiving workflow needs ordered processing and persistent state, especially for intermediate route movements. Dispatch is not an end-to-end acknowledgement; retry a failed workflow on GitHub.
 
-## Contract for the next GitHub workflow
+## GitHub workflow contract
 
 `POST https://api.github.com/repos/<owner>/<repository>/dispatches`
 
@@ -55,7 +55,7 @@ A timeout after GitHub accepted a request can cause a repeated dispatch. The rec
 
 The receiver must validate schemaVersion, source, carrierId and the remaining fields, then pass the observation to Moonshield's `applyPositionObservation` and route logic. The stable ID hashes carrier ID, UTC observation time and system address; the Journal event type is deliberately excluded so equivalent same-time location reports share an ID. An address is required; incomplete carrier observations are reported, not guessed.
 
-The workflow, repository changes and deployment are a separate next step and are not included in this plugin.
+The Moonshield repository includes `.github/workflows/carrier-position.yml`. Install it on the default branch before enabling delivery. Repository setup, deployment options and recovery are documented in `docs/carrier-workflow.md` in the Moonshield repository. The plugin itself does not modify repository files or deploy the site.
 
 ## Development
 

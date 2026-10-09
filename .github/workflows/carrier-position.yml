@@ -1,0 +1,86 @@
+name: Carrier position
+
+on:
+  repository_dispatch:
+    types: [moonshield-position-v1]
+  workflow_dispatch:
+    inputs:
+      observation:
+        description: 'Journal observation JSON (the client_payload object)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Validate and preview without committing or deploying'
+        type: boolean
+        default: true
+
+# Default concurrency would silently replace pending events. Keep a queue instead.
+concurrency:
+  group: moonshield-carrier-position
+  cancel-in-progress: false
+  queue: max
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # Check out the latest branch tip, not the commit when the event was dispatched.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Validate and apply observation
+        id: observation
+        env:
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        shell: bash
+        run: |
+          args=()
+          if [[ "$DRY_RUN" == "true" ]]; then args+=(--dry-run); fi
+          node scripts/journal-position.mjs "$GITHUB_EVENT_PATH" "${args[@]}"
+      - name: Install build dependencies
+        if: steps.observation.outputs.changed == 'true'
+        run: npm ci
+      - name: Check behavior and build site
+        if: steps.observation.outputs.changed == 'true'
+        run: |
+          node --test scripts/*.test.mjs
+          python3 -m unittest discover -s tests/edmc -v
+          npm run build
+      - name: Commit carrier data
+        if: steps.observation.outputs.changed == 'true'
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- src/data/carrier.json src/data/itinerary/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Update carrier position from EDMC'
+          # Never force-push or merge stale generated data. If someone changed the
+          # branch during the build, fail and re-run against the new branch tip.
+          git push origin "HEAD:refs/heads/$TARGET_BRANCH"
+      - name: Save built site
+        if: steps.observation.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: moonshield-site-${{ github.run_id }}
+          path: dist/
+          retention-days: 7
+      # External hosting can deploy from the pushed commit automatically. If it
+      # needs an explicit build hook, configure this optional repository secret.
+      # Run on a valid replay too, so a failed hook can be retried after the commit.
+      - name: Request publication
+        if: github.event_name != 'workflow_dispatch' || !inputs.dry_run
+        env:
+          MOONSHIELD_DEPLOY_HOOK: ${{ secrets.MOONSHIELD_DEPLOY_HOOK }}
+        run: node scripts/request-deployment.mjs

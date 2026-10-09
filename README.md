@@ -109,7 +109,13 @@ The current Inara polling source uses the request start time and a generated obs
 
 `edmc/Moonshield/` contains the Python plugin for receiving carrier location events on the gaming PC and dispatching them to GitHub. It includes a durable local queue, retry handling and EDMC settings. Build an installable ZIP with `python3 scripts/package-edmc.py`; the result is `artifacts/Moonshield-EDMC.zip`. No project checkout is needed on the gaming PC.
 
-See the [plugin installation guide and event contract](edmc/Moonshield/README.md). Delivery is disabled initially: the receiving GitHub Actions workflow and deployment are the next step, not part of the plugin. Run its tests with `python3 -m unittest discover -s tests/edmc -v`.
+See the [plugin installation guide and event contract](edmc/Moonshield/README.md). Delivery is disabled initially. Install the [receiving workflow](docs/carrier-workflow.md) on the default branch before enabling it. Run its tests with `python3 -m unittest discover -s tests/edmc -v`.
+
+## GitHub carrier workflow
+
+[Carrier position](.github/workflows/carrier-position.yml) receives `moonshield-position-v1` events from EDMC. It validates the payload, updates the carrier and active itinerary, runs tests and a production build, then commits and pushes only the operational data. Journal updates do not fetch Inara or Spansh. Duplicate and stale events do not change files.
+
+See [setup, deployment and recovery](docs/carrier-workflow.md). The workflow must be pushed to the default branch before it can receive events. It uses the built-in `GITHUB_TOKEN` for commits, with an optional `MOONSHIELD_DEPLOY_HOOK` secret for hosting providers that need an explicit build request.
 
 ## Planned improvements
 

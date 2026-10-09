@@ -1,0 +1,12 @@
+{
+  "action": "moonshield-position-v1",
+  "client_payload": {
+    "schemaVersion": 1,
+    "carrierId": "3706829824",
+    "eventId": "journal:570f03c3d1e9a192dad304dcd3dc02f6a6029cbfb8e3e4ac8b312a769f56b7f1",
+    "observedAt": "2026-09-27T20:28:10.000Z",
+    "source": "journal",
+    "name": "Hegua BP-A c12",
+    "systemAddress": "3376347713538"
+  }
+}
