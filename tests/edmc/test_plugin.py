@@ -171,6 +171,65 @@ class DeliveryTests(unittest.TestCase):
 
 
 class EDMCAdapterTests(unittest.TestCase):
+    def test_preferences_without_mynotebook_entry_build_and_save(self):
+        values = {}
+        widgets = []
+
+        class Widget:
+            def __init__(self, parent=None, **kwargs):
+                self.options = kwargs
+                widgets.append(self)
+
+            def grid(self, **kwargs):
+                return None
+
+        class Variable:
+            def __init__(self, parent=None, value=None):
+                self.value = value
+
+            def get(self):
+                return self.value
+
+            def set(self, value):
+                self.value = value
+
+        config = types.SimpleNamespace(
+            get_bool=lambda key, default=False: values.get(key, default),
+            get_str=lambda key, default="": values.get(key, default),
+            set=lambda key, value: values.__setitem__(key, value),
+            shutting_down=False,
+        )
+        modules = {
+            "config": types.SimpleNamespace(config=config, appname="EDMC"),
+            "monitor": types.SimpleNamespace(monitor=types.SimpleNamespace(is_live_galaxy=lambda: True)),
+            # Current EDMC provides these widgets but no myNotebook.Entry.
+            "myNotebook": types.SimpleNamespace(Frame=Widget, Label=Widget, Checkbutton=Widget),
+            "timeout_session": types.SimpleNamespace(new_session=Session),
+            "tkinter": types.SimpleNamespace(ttk=types.SimpleNamespace(Entry=Widget),
+                BooleanVar=Variable, StringVar=Variable, W="w", EW="ew", LEFT="left"),
+        }
+        with tempfile.TemporaryDirectory() as folder, patch.dict(sys.modules, modules), patch.dict("os.environ", {"MOONSHIELD_GITHUB_TOKEN": ""}):
+            sys.modules.pop("edmc.Moonshield.load", None)
+            plugin = importlib.import_module("edmc.Moonshield.load")
+            plugin.plugin_start3(folder)
+            try:
+                self.assertIsInstance(plugin.plugin_prefs(object(), "Commander", False), Widget)
+                entries = [widget for widget in widgets if "textvariable" in widget.options]
+                self.assertEqual(len(entries), 3)
+                self.assertEqual(entries[-1].options["show"], "*")
+                self.assertFalse(plugin.prefs["enabled"].get())
+                plugin.prefs["enabled"].set(True)
+                plugin.prefs["token"].set("test-token")
+                plugin.prefs_changed("Commander", False)
+                self.assertTrue(values["moonshield_enabled"])
+                self.assertEqual(values["moonshield_token"], "test-token")
+                self.assertEqual(plugin.sender.status()[0], "Waiting for observations")
+                plugin.plugin_prefs(object(), "Commander", False)
+                self.assertTrue(plugin.prefs["enabled"].get())
+            finally:
+                plugin.plugin_stop()
+                sys.modules.pop("edmc.Moonshield.load", None)
+
     def test_start_callback_and_stop_with_fake_edmc(self):
         values = {"moonshield_enabled": True, "moonshield_repository": "owner/repo"}
         config = types.SimpleNamespace(
@@ -183,7 +242,7 @@ class EDMCAdapterTests(unittest.TestCase):
             "monitor": types.SimpleNamespace(monitor=types.SimpleNamespace(is_live_galaxy=lambda: True)),
             "myNotebook": types.SimpleNamespace(),
             "timeout_session": types.SimpleNamespace(new_session=Session),
-            "tkinter": types.SimpleNamespace(),
+            "tkinter": types.SimpleNamespace(ttk=types.SimpleNamespace()),
         }
         with tempfile.TemporaryDirectory() as folder, patch.dict(sys.modules, modules), patch.dict("os.environ", {"MOONSHIELD_GITHUB_TOKEN": ""}):
             sys.modules.pop("edmc.Moonshield.load", None)

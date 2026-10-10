@@ -3,6 +3,7 @@ import logging
 import os
 from pathlib import Path
 import tkinter as tk
+from tkinter import ttk
 
 import myNotebook as nb
 import timeout_session
@@ -95,7 +96,7 @@ def plugin_prefs(parent, cmdr, is_beta):
         ("token", "GitHub token"),
     ], start=1):
         nb.Label(frame, text=label).grid(row=row, column=0, sticky=tk.W, padx=5, pady=3)
-        nb.Entry(frame, textvariable=prefs[key], show="*" if key == "token" else "", width=42).grid(row=row, column=1, sticky=tk.EW, padx=5)
+        ttk.Entry(frame, textvariable=prefs[key], show="*" if key == "token" else "", width=42).grid(row=row, column=1, sticky=tk.EW, padx=5)
     nb.Label(frame, text="Token: selected repository, Contents: read and write.\nMOONSHIELD_GITHUB_TOKEN overrides the saved token.\nSaved tokens use EDMC settings (not encrypted).\nEnable after the receiving GitHub workflow is installed.", justify=tk.LEFT).grid(row=4, column=0, columnspan=2, sticky=tk.W, padx=5, pady=8)
     return frame
 

@@ -7,7 +7,7 @@ import threading
 from datetime import datetime, timezone
 from pathlib import Path
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 EVENT_TYPE = "moonshield-position-v1"
 DEFAULT_REPOSITORY = "zudljk/snpx-moonshield"
 DEFAULT_CARRIER_ID = "3706829824"

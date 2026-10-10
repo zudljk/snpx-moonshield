@@ -1,6 +1,6 @@
 # Moonshield for EDMarketConnector
 
-Python plugin, version 0.1.0. Uses EDMC's bundled Python, requests/timeout_session, tkinter and sqlite3; no separate Python installation, pip, Git, Node or Moonshield checkout is needed on the gaming PC.
+Python plugin, version 0.1.1. Uses EDMC's bundled Python, requests/timeout_session, tkinter and sqlite3; no separate Python installation, pip, Git, Node or Moonshield checkout is needed on the gaming PC.
 
 ## Install
 
@@ -13,6 +13,10 @@ Python plugin, version 0.1.0. Uses EDMC's bundled Python, requests/timeout_sessi
 The main window shows queue size, delivery errors and the last observation accepted by GitHub during this EDMC session. A successful dispatch means GitHub accepted the event, not that a workflow ran or deployment succeeded. GitHub can accept a dispatch even when no matching workflow exists.
 
 For upgrades, exit EDMC and replace the plugin code files; retain the `state` directory. Its SQLite database is the persistent outbox and duplicate-delivery history. Do not install two copies of the plugin. If the queue is unreadable, the plugin reports an error instead of silently deleting it.
+
+## Changes in 0.1.1
+
+Fixed a missing settings tab on EDMC versions without `myNotebook.Entry`. Input fields now use the standard `ttk.Entry` widget. Exit EDMC, replace the plugin code files from the new ZIP while retaining `state`, and restart EDMC.
 
 ## Events
 
