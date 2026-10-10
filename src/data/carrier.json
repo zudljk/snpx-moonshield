@@ -2,7 +2,7 @@
   "name": "[SNPX] Moonshield",
   "callsign": "HHY-NTG",
   "carrierId": "3706829824",
-  "currentSystem": "Hypoae Ain EN-B d13-11",
+  "currentSystem": "Eafots XX-S c17-8",
   "status": "En Route",
   "role": [
     "Exploration Support",
@@ -11,7 +11,14 @@
   ],
   "welcomeMessage": "Stellanebula Project welcomes all licensed pilots, expedition crews and independent traders aboard [SNPX] Moonshield. Respect the hangar deck, honor the queue and keep your manifests current.",
   "shortGreeting": "Welcome to fleet carrier [SNPX] Moonshield. A Stellanebula Project carrier. We are here to support your exploration, trade and transport needs across the galaxy.",
-  "locationNote": "Holding position at Hypoae Ain EN-B d13-11.",
-  "lastPositionSyncAt": "2026-09-29T17:43:09.553Z",
-  "currentSystemAddress": "387394324339"
+  "locationNote": "Holding position at Eafots XX-S c17-8.",
+  "lastPositionSyncAt": "2026-10-10T17:28:27.000Z",
+  "currentSystemAddress": "2274017480346",
+  "previousSystem": "Hypoae Ain EN-B d13-11",
+  "previousSystemAddress": "387394324339",
+  "lastPositionObservation": {
+    "eventId": "journal:c8da598ee692e6fa1e9574371063e28e3756feee7c3b8fb997ba9fde28d7f9b9",
+    "observedAt": "2026-10-10T17:28:27.000Z",
+    "source": "journal"
+  }
 }
