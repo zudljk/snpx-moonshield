@@ -6,11 +6,7 @@
     "capacity": 25000,
     "capacity_used": 4000,
     "current_fuel": 0,
-    "destination_systems": [
-      "1315040151363",
-      "696564860755",
-      "67880586498"
-    ],
+    "destination_systems": ["1315040151363", "696564860755", "67880586498"],
     "mass": 25000,
     "refuel_destinations": [],
     "source_system": "633407083218",
@@ -20,11 +16,7 @@
     "calculate_starting_fuel": true,
     "capacity": 25000,
     "capacity_used": 4000,
-    "destinations": [
-      "1315040151363",
-      "696564860755",
-      "67880586498"
-    ],
+    "destinations": ["1315040151363", "696564860755", "67880586498"],
     "fuel_loaded": 0,
     "jumps": [
       {
@@ -43,8 +35,8 @@
         "x": -137.125,
         "y": 66.625,
         "z": -3.3125,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -63,8 +55,8 @@
         "x": -484.5,
         "y": 59.25,
         "z": -362.0625,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -83,8 +75,8 @@
         "x": -838.84375,
         "y": 17.59375,
         "z": -712.21875,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -103,8 +95,8 @@
         "x": -1197.53125,
         "y": 51,
         "z": -1058.4375,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -123,8 +115,8 @@
         "x": -1540.1875,
         "y": 55.59375,
         "z": -1422.5,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -143,8 +135,8 @@
         "x": -1843.46875,
         "y": 58.875,
         "z": -1819.90625,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -163,8 +155,8 @@
         "x": -2182.78125,
         "y": 100.6875,
         "z": -2183.53125,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -183,8 +175,8 @@
         "x": -2540.65625,
         "y": 130,
         "z": -2531.21875,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -203,8 +195,8 @@
         "x": -2873.3125,
         "y": 126.125,
         "z": -2902.40625,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -223,8 +215,8 @@
         "x": -3218.84375,
         "y": 131.09375,
         "z": -3261.875,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -243,8 +235,8 @@
         "x": -3577.78125,
         "y": 109.15625,
         "z": -3608.96875,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -263,8 +255,8 @@
         "x": -3923.3125,
         "y": 116.625,
         "z": -3970.03125,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -283,8 +275,8 @@
         "x": -4238.125,
         "y": 87.25,
         "z": -4355.625,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -303,8 +295,8 @@
         "x": -4590.78125,
         "y": 103.5,
         "z": -4709.59375,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -323,8 +315,8 @@
         "x": -4937.34375,
         "y": 61.09375,
         "z": -5060.40625,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -343,8 +335,8 @@
         "x": -5283.78125,
         "y": 92.125,
         "z": -5419.40625,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -363,8 +355,8 @@
         "x": -5342.75,
         "y": 71.34375,
         "z": -5475.03125,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -383,8 +375,8 @@
         "x": -5342.75,
         "y": 71.34375,
         "z": -5475.03125,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -403,8 +395,8 @@
         "x": -5291.4375,
         "y": 72.65625,
         "z": -5343.71875,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -423,8 +415,8 @@
         "x": -5291.4375,
         "y": 72.65625,
         "z": -5343.71875,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -443,8 +435,8 @@
         "x": -5727.21875,
         "y": 121.84375,
         "z": -5583.875,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -463,8 +455,8 @@
         "x": -6180.1875,
         "y": 75.9375,
         "z": -5780.15625,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
@@ -483,8 +475,8 @@
         "x": -6629.375,
         "y": 60.1875,
         "z": -5994.8125,
-        "visited": false,
-        "skipped": true,
+        "visited": true,
+        "skipped": false,
         "current": false
       },
       {
