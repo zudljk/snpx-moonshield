@@ -2,7 +2,7 @@
   "name": "[SNPX] Moonshield",
   "callsign": "HHY-NTG",
   "carrierId": "3706829824",
-  "currentSystem": "Eafots SC-M d7-38",
+  "currentSystem": "Myoideau NM-V b57-0",
   "status": "En Route",
   "role": [
     "Exploration Support",
@@ -11,14 +11,14 @@
   ],
   "welcomeMessage": "Stellanebula Project welcomes all licensed pilots, expedition crews and independent traders aboard [SNPX] Moonshield. Respect the hangar deck, honor the queue and keep your manifests current.",
   "shortGreeting": "Welcome to fleet carrier [SNPX] Moonshield. A Stellanebula Project carrier. We are here to support your exploration, trade and transport needs across the galaxy.",
-  "locationNote": "Holding position at Eafots SC-M d7-38.",
-  "lastPositionSyncAt": "2026-10-10T18:35:06.000Z",
-  "currentSystemAddress": "1315040151363",
-  "previousSystem": "Eafots XX-S c17-8",
-  "previousSystemAddress": "2274017480346",
+  "locationNote": "Holding position at Myoideau NM-V b57-0.",
+  "lastPositionSyncAt": "2026-10-30T20:16:22.178Z",
+  "currentSystemAddress": "575928540145",
+  "previousSystem": "Eafots SC-M d7-38",
+  "previousSystemAddress": "1315040151363",
   "lastPositionObservation": {
-    "eventId": "journal:14b7b8ffbcbe2d9a2534722848e09627ab07d055b5c39848025ceb48593a7781",
-    "observedAt": "2026-10-10T18:35:06.000Z",
-    "source": "journal"
+    "eventId": "5bf06c01-191d-4e50-8f85-8df8813169fa",
+    "observedAt": "2026-10-30T20:16:21.462Z",
+    "source": "inara"
   }
 }
