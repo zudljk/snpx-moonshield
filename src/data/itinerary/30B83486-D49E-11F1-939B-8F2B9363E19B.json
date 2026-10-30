@@ -42,7 +42,10 @@
         "tritium_in_market": 1003,
         "x": -137.125,
         "y": 66.625,
-        "z": -3.3125
+        "z": -3.3125,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.425013140111,
@@ -59,7 +62,10 @@
         "tritium_in_market": 921,
         "x": -484.5,
         "y": 59.25,
-        "z": -362.0625
+        "z": -362.0625,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.904126550469,
@@ -76,7 +82,10 @@
         "tritium_in_market": 839,
         "x": -838.84375,
         "y": 17.59375,
-        "z": -712.21875
+        "z": -712.21875,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.639993442153,
@@ -93,7 +102,10 @@
         "tritium_in_market": 757,
         "x": -1197.53125,
         "y": 51,
-        "z": -1058.4375
+        "z": -1058.4375,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.975911529121,
@@ -110,7 +122,10 @@
         "tritium_in_market": 675,
         "x": -1540.1875,
         "y": 55.59375,
-        "z": -1422.5
+        "z": -1422.5,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.922004658914,
@@ -127,7 +142,10 @@
         "tritium_in_market": 593,
         "x": -1843.46875,
         "y": 58.875,
-        "z": -1819.90625
+        "z": -1819.90625,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.103594895388,
@@ -144,7 +162,10 @@
         "tritium_in_market": 512,
         "x": -2182.78125,
         "y": 100.6875,
-        "z": -2183.53125
+        "z": -2183.53125,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.820303646721,
@@ -161,7 +182,10 @@
         "tritium_in_market": 431,
         "x": -2540.65625,
         "y": 130,
-        "z": -2531.21875
+        "z": -2531.21875,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 498.452963122211,
@@ -178,7 +202,10 @@
         "tritium_in_market": 350,
         "x": -2873.3125,
         "y": 126.125,
-        "z": -2902.40625
+        "z": -2902.40625,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 498.632445223621,
@@ -195,7 +222,10 @@
         "tritium_in_market": 269,
         "x": -3218.84375,
         "y": 131.09375,
-        "z": -3261.875
+        "z": -3261.875,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.791410592021,
@@ -212,7 +242,10 @@
         "tritium_in_market": 188,
         "x": -3577.78125,
         "y": 109.15625,
-        "z": -3608.96875
+        "z": -3608.96875,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.813721159569,
@@ -229,7 +262,10 @@
         "tritium_in_market": 108,
         "x": -3923.3125,
         "y": 116.625,
-        "z": -3970.03125
+        "z": -3970.03125,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 498.650519723295,
@@ -246,7 +282,10 @@
         "tritium_in_market": 28,
         "x": -4238.125,
         "y": 87.25,
-        "z": -4355.625
+        "z": -4355.625,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.924363419733,
@@ -263,7 +302,10 @@
         "tritium_in_market": 0,
         "x": -4590.78125,
         "y": 103.5,
-        "z": -4709.59375
+        "z": -4709.59375,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 494.947741283423,
@@ -280,7 +322,10 @@
         "tritium_in_market": 0,
         "x": -4937.34375,
         "y": 61.09375,
-        "z": -5060.40625
+        "z": -5060.40625,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.862861075728,
@@ -297,7 +342,10 @@
         "tritium_in_market": 0,
         "x": -5283.78125,
         "y": 92.125,
-        "z": -5419.40625
+        "z": -5419.40625,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 83.685807955262,
@@ -314,7 +362,10 @@
         "tritium_in_market": 0,
         "x": -5342.75,
         "y": 71.34375,
-        "z": -5475.03125
+        "z": -5475.03125,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 0,
@@ -331,7 +382,10 @@
         "tritium_in_market": 0,
         "x": -5342.75,
         "y": 71.34375,
-        "z": -5475.03125
+        "z": -5475.03125,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 140.988183791231,
@@ -348,7 +402,10 @@
         "tritium_in_market": 0,
         "x": -5291.4375,
         "y": 72.65625,
-        "z": -5343.71875
+        "z": -5343.71875,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 0,
@@ -365,7 +422,10 @@
         "tritium_in_market": 0,
         "x": -5291.4375,
         "y": 72.65625,
-        "z": -5343.71875
+        "z": -5343.71875,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 499.999732421803,
@@ -382,7 +442,10 @@
         "tritium_in_market": 0,
         "x": -5727.21875,
         "y": 121.84375,
-        "z": -5583.875
+        "z": -5583.875,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 495.79673392146,
@@ -399,7 +462,10 @@
         "tritium_in_market": 0,
         "x": -6180.1875,
         "y": 75.9375,
-        "z": -5780.15625
+        "z": -5780.15625,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 498.091134553018,
@@ -416,7 +482,10 @@
         "tritium_in_market": 0,
         "x": -6629.375,
         "y": 60.1875,
-        "z": -5994.8125
+        "z": -5994.8125,
+        "visited": false,
+        "skipped": true,
+        "current": false
       },
       {
         "distance": 498.725307776924,
@@ -433,7 +502,10 @@
         "tritium_in_market": 0,
         "x": -7076.21875,
         "y": 63.21875,
-        "z": -6216.28125
+        "z": -6216.28125,
+        "visited": true,
+        "skipped": false,
+        "current": false
       },
       {
         "distance": 498.933873139142,
@@ -450,7 +522,10 @@
         "tritium_in_market": 0,
         "x": -7519.8125,
         "y": 56.34375,
-        "z": -6444.5625
+        "z": -6444.5625,
+        "visited": true,
+        "skipped": false,
+        "current": true
       },
       {
         "distance": 499.843477453818,
@@ -467,7 +542,10 @@
         "tritium_in_market": 0,
         "x": -7968.6875,
         "y": 61.1875,
-        "z": -6664.40625
+        "z": -6664.40625,
+        "visited": false,
+        "skipped": false,
+        "current": false
       },
       {
         "distance": 493.643153985308,
@@ -484,7 +562,10 @@
         "tritium_in_market": 0,
         "x": -8406.90625,
         "y": 44.1875,
-        "z": -6891.03125
+        "z": -6891.03125,
+        "visited": false,
+        "skipped": false,
+        "current": false
       },
       {
         "distance": 497.920700929438,
@@ -501,7 +582,10 @@
         "tritium_in_market": 0,
         "x": -8846.75,
         "y": 14.6875,
-        "z": -7122.53125
+        "z": -7122.53125,
+        "visited": false,
+        "skipped": false,
+        "current": false
       },
       {
         "distance": 489.652645137985,
@@ -518,7 +602,10 @@
         "tritium_in_market": 0,
         "x": -9285.625,
         "y": -40.40625,
-        "z": -7332.5625
+        "z": -7332.5625,
+        "visited": false,
+        "skipped": false,
+        "current": false
       },
       {
         "distance": 263.091352138972,
@@ -535,7 +622,10 @@
         "tritium_in_market": 0,
         "x": -9529.4375,
         "y": -64.5,
-        "z": -7428.4375
+        "z": -7428.4375,
+        "visited": false,
+        "skipped": false,
+        "current": false
       }
     ],
     "mass": 25000,
@@ -547,8 +637,7 @@
   "status": "ok",
   "updated_at": "2026-10-30T20:12:12",
   "moonshieldProgress": {
-    "currentIndex": -1,
-    "status": "uncertain",
-    "message": "Route position is ambiguous; no unique starting observation is available."
+    "currentIndex": 24,
+    "status": "confirmed"
   }
 }
