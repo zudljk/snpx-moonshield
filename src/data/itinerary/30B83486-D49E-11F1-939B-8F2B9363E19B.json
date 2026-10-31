@@ -517,7 +517,7 @@
         "z": -6444.5625,
         "visited": true,
         "skipped": false,
-        "current": true
+        "current": false
       },
       {
         "distance": 499.843477453818,
@@ -597,7 +597,7 @@
         "z": -7332.5625,
         "visited": true,
         "skipped": false,
-        "current": false
+        "current": true
       },
       {
         "distance": 263.091352138972,
