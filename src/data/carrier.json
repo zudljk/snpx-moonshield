@@ -2,7 +2,7 @@
   "name": "[SNPX] Moonshield",
   "callsign": "HHY-NTG",
   "carrierId": "3706829824",
-  "currentSystem": "Myoideau ZV-O b47-0",
+  "currentSystem": "Syreadiae BQ-A c3-0",
   "status": "En Route",
   "role": [
     "Exploration Support",
@@ -11,14 +11,14 @@
   ],
   "welcomeMessage": "Stellanebula Project welcomes all licensed pilots, expedition crews and independent traders aboard [SNPX] Moonshield. Respect the hangar deck, honor the queue and keep your manifests current.",
   "shortGreeting": "Welcome to fleet carrier [SNPX] Moonshield. A Stellanebula Project carrier. We are here to support your exploration, trade and transport needs across the galaxy.",
-  "locationNote": "Holding position at Myoideau ZV-O b47-0.",
-  "lastPositionSyncAt": "2026-10-30T21:22:32.836Z",
-  "currentSystemAddress": "570022960025",
-  "previousSystem": "Myoideau NM-V b57-0",
-  "previousSystemAddress": "575928540145",
+  "locationNote": "Holding position at Syreadiae BQ-A c3-0.",
+  "lastPositionSyncAt": "2026-10-31T20:32:20.043Z",
+  "currentSystemAddress": "68283239706",
+  "previousSystem": "Myoideau ZV-O b47-0",
+  "previousSystemAddress": "570022960025",
   "lastPositionObservation": {
-    "eventId": "f619456f-ca63-4db9-83a3-474c14ddaa47",
-    "observedAt": "2026-10-30T21:22:32.117Z",
+    "eventId": "f8e00ef1-e253-45f2-bdea-72af86c563e1",
+    "observedAt": "2026-10-31T20:32:19.234Z",
     "source": "inara"
   }
 }
