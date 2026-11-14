@@ -597,7 +597,7 @@
         "z": -7332.5625,
         "visited": true,
         "skipped": false,
-        "current": true
+        "current": false
       },
       {
         "distance": 263.091352138972,
@@ -617,7 +617,7 @@
         "z": -7428.4375,
         "visited": false,
         "skipped": false,
-        "current": false
+        "current": true
       }
     ],
     "mass": 25000,
