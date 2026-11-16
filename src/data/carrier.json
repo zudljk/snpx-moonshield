@@ -12,13 +12,13 @@
   "welcomeMessage": "Stellanebula Project welcomes all licensed pilots, expedition crews and independent traders aboard [SNPX] Moonshield. Respect the hangar deck, honor the queue and keep your manifests current.",
   "shortGreeting": "Welcome to fleet carrier [SNPX] Moonshield. A Stellanebula Project carrier. We are here to support your exploration, trade and transport needs across the galaxy.",
   "locationNote": "Holding position at Syreadiae JX-F c0.",
-  "lastPositionSyncAt": "2026-11-14T19:17:40.000Z",
+  "lastPositionSyncAt": "2026-11-16T21:17:02.000Z",
   "currentSystemAddress": "67880586498",
   "previousSystem": "Syreadiae BQ-A c3-0",
   "previousSystemAddress": "68283239706",
   "lastPositionObservation": {
-    "eventId": "journal:ecc8804e9a28e19a2f1b7df06590bf7a19e0b874c40261d2b98dd506b1a3c53e",
-    "observedAt": "2026-11-14T19:17:40.000Z",
+    "eventId": "journal:9d738dc33614b981df22de3b66100a8b7d714df71b48df78b790708857d9e7bc",
+    "observedAt": "2026-11-16T21:17:02.000Z",
     "source": "journal"
   }
 }
